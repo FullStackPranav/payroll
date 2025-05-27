@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
+import adminRoutes from './routes/adminroutes.js'; // ✅ Add this near the top
+
 
 
 dotenv.config();
@@ -16,6 +18,9 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/attendance',attendanceRoutes)
+app.use('/api/users', adminRoutes); 
+
+
 
 
 connectDB();
