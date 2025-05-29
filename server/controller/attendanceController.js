@@ -75,7 +75,8 @@ export const punchOut = async (req, res) => {
 
 export const getDailyLogs = async (req, res) => {
   try {
-    const userId = req.user.id;
+    // Use `id` from query if provided (admin view), otherwise default to logged-in user
+    const userId = req.query.id || req.user.id;
     const { week, year } = req.query;
 
     let startDate, endDate;
@@ -114,4 +115,3 @@ export const getDailyLogs = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch logs' });
   }
 };
-

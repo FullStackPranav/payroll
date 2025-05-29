@@ -20,6 +20,11 @@ const AdminDashboard = () => {
 <Link to="/adminviewusers">
   <button>View Users</button>
 </Link>
+<br></br>
+<Link to="/adminviewroles">
+  <button>View Roles</button>
+</Link>
+<br></br>
       <button onClick={logout}>Log OUt</button>
     </div>
     </>

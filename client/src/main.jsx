@@ -11,6 +11,7 @@ import EmployeeDashboard from './components/employee/employeedashboard';
 import AdminDashboard from './components/admin/admindashboard';
 import AdminUserList from './components/admin/adminviewusers';
 import AdminUserDetail from './components/admin/Adminuserdetail';
+import AdminRolesPage from './components/admin/adminsetrole';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/adminviewusers" element={<AdminUserList />} />
 
         <Route path="/admin-dashboard"element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}/>
+        <Route path="/adminviewroles"element={<ProtectedRoute><AdminRolesPage /></ProtectedRoute>}/>
 
         <Route path="/employee-dashboard"element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}/>
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />
