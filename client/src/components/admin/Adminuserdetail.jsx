@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link,useParams, useNavigate } from 'react-router-dom';
 
 const AdminUserDetail = () => {
   const { id } = useParams();
@@ -119,9 +119,9 @@ const AdminUserDetail = () => {
           </option>
         ))}
       </select>
-      <button onClick={handleAssignRole} disabled={!selectedRole}>
-        Assign Role
-      </button>
+      
+
+      <button></button>
 
       <br /><br />
       <h3>Attendance Logs</h3>
@@ -162,6 +162,10 @@ const AdminUserDetail = () => {
       </table>
 
       <br />
+
+      <Link to={`/admin/users/${id}/payslips`}>
+      <button>View Payslips</button>
+    </Link>
       <button onClick={() => navigate(-1)}>Go Back</button>
     </div>
   );

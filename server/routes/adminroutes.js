@@ -16,19 +16,23 @@ import {
 
 const router = express.Router();
 
-// USER routes (now prefixed manually)
+// USER routes 
 router.get('/users/all', verifyToken, getAllUsers);
 router.get('/users/:id', verifyToken, getUserById);
 router.put('/users/:id/status', verifyToken, updateUserStatus);
 
 
 
-router.post('/employee-roles', verifyToken, createEmployeeRole);
-router.get('/employee-roles', verifyToken, getAllEmployeeRoles);
-router.put('/users/:id/assign-job-role',verifyToken,assignJobRole);
+
+
 
 // Payroll
 router.get('/users/:id/payslip',verifyToken,getPayslipData);
+
+// roles
+router.post('/employee-roles', verifyToken, createEmployeeRole);
+router.get('/employee-roles', verifyToken, getAllEmployeeRoles);
+router.put('/users/:id/assign-job-role',verifyToken,assignJobRole);
 
 
 export default router;
