@@ -1,45 +1,51 @@
-// client/src/components/employee/PayslipDetail.jsx
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const PayslipDetail = () => {
-  const { year, month } = useParams();
-  const [payslip, setPayslip] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem('token');
+  const { id, year, month } = useParams(); // year, month, and possibly id from URL
+  const [data, setData] = useState(null);
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchPayslip = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/admin/employee/payslips`, {
-            headers: { Authorization: `Bearer ${token}` },
-            params: { year, month },
-          });
-        setPayslip(res.data);
+        let url;
+        if (id && id !== 'undefined') {
+          url = `http://localhost:5000/api/users/${id}/payslip`;
+        } else {
+          url = `http://localhost:5000/api/payslip/me`;
+        }
+
+        const res = await axios.get(url, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { year, month } // as query parameters
+        });
+
+        setData(res.data);
       } catch (err) {
-        console.error("Error fetching payslip detail", err);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching payslip:', err);
       }
     };
+
     fetchPayslip();
-  }, [year, month, token]);
+  }, [id, year, month, token]);
 
-  if (loading) return <p>Loading payslip details...</p>;
-
-  if (!payslip) return <p>No payslip data found.</p>;
+  if (!data) return <p>Loading payslip...</p>;
 
   return (
     <div style={{ padding: '2rem' }}>
-      <button onClick={() => navigate(-1)}>Back to Payslips</button>
-      <h2>Payslip for {month}/{year}</h2>
-      <p><strong>Employee Name:</strong> {payslip.employee.name}</p>
-      <p><strong>Role:</strong> {payslip.employee.role}</p>
-      <p><strong>Hourly Rate:</strong> ${payslip.employee.hourlyRate.toFixed(2)}</p>
-      <p><strong>Total Hours Worked:</strong> {payslip.totalHours}</p>
-      <p><strong>Total Pay:</strong> ${payslip.totalPay.toFixed(2)}</p>
+      <h2>
+        {data.employee.name}'s Payslip for{' '}
+        {new Date(data.year, data.month - 1).toLocaleString('default', { month: 'long' })}{' '}
+        {data.year}
+      </h2>
+      <p><strong>Role:</strong> {data.employee.role}</p>
+      <p><strong>Hourly Rate:</strong> ₹{data.employee.hourlyRate}</p>
+      <p><strong>Total Hours Worked:</strong> {data.totalHours} hrs</p>
+      <p><strong>Total Pay:</strong> ₹{data.totalPay}</p>
+      <button onClick={() => navigate(-1)}>Back</button>
     </div>
   );
 };

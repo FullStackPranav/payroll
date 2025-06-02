@@ -81,26 +81,44 @@ export const getPayslipData = async (req, res) => {
 };
 
 // @desc Get list of months from user join date till now
-export const getPayslipMonthsForLoggedInUser = async (req, res) => {
+export const getLoggedInUserPayslipData = async (req, res) => {
+  const { year, month } = req.query;
+  const userId = req.user.id;
+
   try {
-    const userId = req.user.id;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate('jobRole');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const startDate = moment(user.joinDate).startOf('month');
-    const endDate = moment().startOf('month');
+    const startOfMonth = moment.utc(`${year}-${month}-01`).startOf('month').toDate();
+    const endOfMonth = moment.utc(startOfMonth).endOf('month').toDate();
 
-    const months = [];
-    let current = startDate.clone();
-    while (current.isSameOrBefore(endDate)) {
-      months.push({ year: current.year(), month: current.month() + 1 }); // +1 because JS months are 0-indexed
-      current.add(1, 'month');
-    }
+    const logs = await Attendance.find({
+      user: userId,
+      date: {
+        $gte: startOfMonth,
+        $lte: endOfMonth
+      }
+    });
 
-    res.json(months);
+    const totalHours = logs.reduce((sum, log) => sum + (log.workedHours || 0), 0);
+    const hourlyRate = user.jobRole?.hourlyRate || 0;
+    const totalPay = totalHours * hourlyRate;
+
+    res.json({
+      employee: {
+        name: user.name,
+        role: user.jobRole?.name || 'Not Assigned',
+        hourlyRate,
+      },
+      month,
+      year,
+      totalHours,
+      totalPay
+    });
+
   } catch (err) {
-    console.error('Error fetching payslip months:', err);
-    res.status(500).json({ message: 'Server error while fetching payslip months' });
+    console.error('Error generating payslip:', err);
+    res.status(500).json({ message: 'Server error while generating payslip' });
   }
 };
 

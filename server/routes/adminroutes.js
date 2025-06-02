@@ -11,9 +11,9 @@ import {
 import {
   createEmployeeRole,
   getAllEmployeeRoles,
+  getLoggedInUserPayslipData,
   getPayslipData,
- 
-  getPayslipMonthsForLoggedInUser
+
 } from '../controller/payrollcontroller.js';
 
 const router = express.Router();
@@ -30,7 +30,8 @@ router.put('/users/:id/status', verifyToken, updateUserStatus);
 
 // Payroll
 router.get('/users/:id/payslip',verifyToken,getPayslipData);
-router.get('/employee/payslips',verifyToken,getPayslipMonthsForLoggedInUser)
+// router.get('/employee/payslips',verifyToken,getLoggedInUserPayslipData)
+router.get('/payslip/me', verifyToken, getLoggedInUserPayslipData);
 
 // roles
 router.post('/employee-roles', verifyToken, createEmployeeRole);

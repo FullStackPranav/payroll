@@ -1,69 +1,46 @@
-// client/src/components/employee/PayslipList.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useParams, Link } from 'react-router-dom';
 
-const PayslipList = () => {
-  const [payslips, setPayslips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem('token');
-  const navigate = useNavigate();
+const AdminUserPayslipPage = () => {
+  const { id } = useParams();
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth(); // 0-indexed
 
-  useEffect(() => {
-    const fetchPayslips = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/employee/payslips', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-        setPayslips(res.data);
-      } catch (err) {
-        console.error("Error fetching payslips", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPayslips();
-  }, [token]);
+  const startYear = 2023;
+  const allMonths = [];
 
-  // Helper function to determine status (assuming current month or future is pending)
-  const getStatus = (year, month) => {
-    const now = new Date();
-    const thisYear = now.getFullYear();
-    const thisMonth = now.getMonth() + 1; // JS months 0-indexed
-    if (year < thisYear) return 'Generated';
-    if (year === thisYear && month < thisMonth) return 'Generated';
-    return 'Pending';
-  };
-
-  if (loading) return <p>Loading payslips...</p>;
+  for (let y = startYear; y <= currentYear; y++) {
+    for (let m = 0; m < 12; m++) {
+      if (y === currentYear && m > currentMonth) break;
+      allMonths.push({ year: y, month: m });
+    }
+  }
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h2>Your Payslips</h2>
-      <table style={{ border: "1px solid black", borderCollapse: "collapse", width: '50%' }}>
+      <h2>Monthly Payslip Summary</h2>
+      <table>
         <thead>
           <tr>
-            <th style={{ border: "1px solid black", padding: "8px" }}>Year</th>
-            <th style={{ border: "1px solid black", padding: "8px" }}>Month</th>
-            <th style={{ border: "1px solid black", padding: "8px" }}>Status</th>
+            <th>Month</th>
+            <th>Status</th>
+            <th>View</th>
           </tr>
         </thead>
         <tbody>
-          {payslips.map(({ year, month }, idx) => {
-            const status = getStatus(year, month);
+          {allMonths.map(({ year, month }) => {
+            const isPastMonth =
+              year < currentYear || (year === currentYear && month < currentMonth);
+            const monthName = new Date(year, month).toLocaleString('default', { month: 'long' });
             return (
-              <tr 
-                key={idx} 
-                style={{ cursor: status === 'Generated' ? 'pointer' : 'default', backgroundColor: status === 'Generated' ? '#d4edda' : '#f8d7da' }}
-                onClick={() => {
-                  if (status === 'Generated') {
-                    navigate(`/employee/payslips/${year}/${month}`);
-                  }
-                }}
-              >
-                <td style={{ border: "1px solid black", padding: "8px" }}>{year}</td>
-                <td style={{ border: "1px solid black", padding: "8px" }}>{month}</td>
-                <td style={{ border: "1px solid black", padding: "8px" }}>{status}</td>
+              <tr key={`${year}-${month}`}>
+                <td>{monthName} {year}</td>
+                <td>{isPastMonth ? 'Generated' : 'Pending'}</td>
+                <td>
+                  <Link to={`/admin/users/${id}/payslip/${year}/${month + 1}`}>
+                    View
+                  </Link>
+                </td>
               </tr>
             );
           })}
@@ -73,4 +50,4 @@ const PayslipList = () => {
   );
 };
 
-export default PayslipList;
+export default AdminUserPayslipPage;
