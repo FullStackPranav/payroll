@@ -62,7 +62,7 @@ const AdminUserList = () => {
                 </Link>
               </td>
               <td style={{ border: '1px solid black', padding: '8px' }}>{user.email}</td>
-              <td style={{ border: '1px solid black', padding: '8px' }}>{user.role}</td>
+              <td style={{ border: '1px solid black', padding: '8px' }}>{user.jobRole?.name || 'not assigned'}</td>
               <td style={{ border: '1px solid black', padding: '8px' }}>{user.status}</td> {/* ✅ NEW */}
             </tr>
           ))}

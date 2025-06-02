@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logout from '../logout';
 import axios from 'axios';
 import Navbar from '../navbar';
+import { useNavigate } from 'react-router-dom'; // ✅ Correct import
 
 const EmployeeDashboard = () => {
   const [message, setMessage] = useState('');
@@ -12,6 +13,8 @@ const EmployeeDashboard = () => {
   const token = localStorage.getItem('token');
   const name = localStorage.getItem('name');
   const email = localStorage.getItem('email');
+
+  const navigate = useNavigate(); // ✅ Correct usage
 
   const punchIn = async () => {
     try {
@@ -35,13 +38,12 @@ const EmployeeDashboard = () => {
     }
   };
 
-  // ✅ Fetch logs when component mounts or when week/year changes
   useEffect(() => {
     const fetchLogs = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/attendance/logs', {
           headers: { Authorization: `Bearer ${token}` },
-          params: { week, year } // ✅ Add optional filters
+          params: { week, year }
         });
         setLogs(res.data);
       } catch (err) {
@@ -64,7 +66,7 @@ const EmployeeDashboard = () => {
 
         <h3>Attendance Logs</h3>
 
-        {/* ✅ Week and Year Selectors */}
+        {/* Week and Year Selectors */}
         <div style={{ marginBottom: "1rem" }}>
           <label>Week: </label>
           <select value={week} onChange={(e) => setWeek(e.target.value)}>
@@ -94,11 +96,19 @@ const EmployeeDashboard = () => {
             {logs.map((log, index) => (
               <tr key={index}>
                 <td style={{ border: "1px solid black", padding: "8px" }}>{log.date}</td>
-                <td style={{ border: "1px solid black", padding: "8px" }}>{log.hoursWorked} hrs</td>
+                <td style={{ border: "1px solid black", padding: "8px" }}>
+                  {log.hoursWorked > 0 ? `${log.hoursWorked} hr${log.hoursWorked > 1 ? 's' : ''}` : ''}
+                  {log.minutesWorked > 0 ? ` ${log.minutesWorked} min${log.minutesWorked > 1 ? 's' : ''}` : (log.hoursWorked === 0 ? '0 mins' : '')}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        {/* View Payslip Button */}
+        <div style={{ marginTop: '2rem' }}>
+          <button onClick={() => navigate('/employee/payslips')}>View Payslip</button>
+        </div>
       </div>
     </>
   );

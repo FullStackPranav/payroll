@@ -14,26 +14,34 @@ import AdminUserDetail from './components/admin/Adminuserdetail';
 import AdminRolesPage from './components/admin/adminsetrole';
 import PayslipDetail from './components/admin/PayslipDetail';
 import AdminUserPayslipPage from './components/admin/AdminUserPayslipPage';
+import PayslipList from './components/employee/paysliplist';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
+
+       
+      {/* default */}
+
         <Route path="/" element={<Register />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        <Route path="/adminviewusers" element={<AdminUserList />} />
+         {/* admin */}
 
+        <Route path="/adminviewusers" element={<AdminUserList />} />
         <Route path="/admin-dashboard"element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}/>
         <Route path="/adminviewroles"element={<ProtectedRoute><AdminRolesPage /></ProtectedRoute>}/>
-
-        <Route path="/employee-dashboard"element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}/>
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />
-
         <Route path="/admin/users/:id/payslips" element={<AdminUserPayslipPage />} />
         <Route path="/admin/users/:id/payslip/:year/:month" element={<PayslipDetail />} />
 
+       {/* employee */}
+
+       <Route path="/employee-dashboard"element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}/>
+       <Route path="/employee/payslips"element={<ProtectedRoute><PayslipList /></ProtectedRoute>}/>
+       <Route path="/employee/payslips/:year/:month"element={<ProtectedRoute><PayslipDetail /></ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>
   </StrictMode>

@@ -9,69 +9,77 @@ dayjs.extend(isoWeek);
 
 export const punchIn = async (req, res) => {
   try {
-    console.log("@user in punchIn", req.user);
+    const userId = req.user.id;
 
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.status !== "active") {
-      return res.status(403).json({ message: "User is not active and cannot punch in" });
-    }
-
-    const existing = await Attendance.findOne({
-      user: req.user.id,
-      punchOut: { $exists: false }
+    // Find today's attendance record or create a new one
+    let record = await Attendance.findOne({
+      user: userId,
+      date: dayjs().startOf('day').toDate(),
     });
 
-    if (existing) {
-      return res.status(400).json({ message: "Already punched in" });
+    if (!record) {
+      record = new Attendance({
+        user: userId,
+        date: dayjs().startOf('day').toDate(),
+        punchCycles: [],
+        workedHours: 0,
+      });
     }
 
-    const record = new Attendance({
-      user: req.user.id,
-      punchIn: new Date(),
-      date: new Date()
-    });
+    // Check if there is already an open punch-in without punch-out
+    const openCycle = record.punchCycles.find(cycle => !cycle.punchOut);
+    if (openCycle) {
+      return res.status(400).json({ message: "Already punched in, please punch out first" });
+    }
+
+    // Add new punch cycle with punchIn time
+    record.punchCycles.push({ punchIn: new Date() });
 
     await record.save();
     res.status(200).json({ message: "Punch in recorded" });
-
   } catch (err) {
-    console.error("Punch in error", err);
+    console.error("PunchIn Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 export const punchOut = async (req, res) => {
   try {
-    console.log("User in punchOut:", req.user);
+    const userId = req.user.id;
 
+    // Find today's attendance record
     const record = await Attendance.findOne({
-      user: req.user.id,
-      punchOut: { $exists: false }
+      user: userId,
+      date: dayjs().startOf('day').toDate(),
     });
 
     if (!record) {
-      return res.status(400).json({ message: "No punch-in record found" });
+      return res.status(400).json({ message: "No attendance record for today found" });
     }
 
-    const punchOutTime = new Date();
-    const workedHours = (punchOutTime - record.punchIn) / (1000 * 60 * 60); // ✅ NEW: calculate worked hours
+    // Find open punch cycle without punchOut
+    const openCycle = record.punchCycles.find(cycle => !cycle.punchOut);
+    if (!openCycle) {
+      return res.status(400).json({ message: "No open punch-in found" });
+    }
 
-    record.punchOut = punchOutTime;
-    record.workedHours = workedHours; // ✅ NEW: store worked hours
+    // Set punchOut time
+    openCycle.punchOut = new Date();
+
+    // Calculate worked hours for this cycle in hours
+    const workedHoursForCycle = (openCycle.punchOut - openCycle.punchIn) / (1000 * 60 * 60);
+
+    // Add to total workedHours for the day
+    record.workedHours = (record.workedHours || 0) + workedHoursForCycle;
 
     await record.save();
-    res.status(200).json({ message: "Punch out recorded", workedHours: workedHours.toFixed(2) }); // ✅ Optional: send worked hours back
-
+    res.status(200).json({ message: "Punch out recorded", workedHours: record.workedHours.toFixed(2) });
   } catch (err) {
     console.error("PunchOut Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export const getDailyLogs = async (req, res) => {
   try {
@@ -96,18 +104,36 @@ export const getDailyLogs = async (req, res) => {
       date: { $gte: startDate, $lte: endDate }
     }).sort({ date: -1 });
 
-    const logs = records.map((record) => {
-      const punchIn = new Date(record.punchIn);
-      const punchOut = new Date(record.punchOut);
-      const durationHours = record.punchOut
-        ? Math.round((punchOut - punchIn) / (1000 * 60 * 60) * 100) / 100
-        : 0;
-
+    const logs = records.map(record => {
+      const punchIn = record.punchCycles.length > 0 ? record.punchCycles[0].punchIn : null;
+      const punchOut = record.punchCycles.length > 0 ? record.punchCycles[0].punchOut : null;
+    
+      if (!punchIn) {
+        return {
+          date: record.date.toDateString(),
+          hoursWorked: 0,
+          minutesWorked: 0,
+        };
+      }
+    
+      let totalMinutes = 0;
+      // Sum all punch cycles durations
+      record.punchCycles.forEach(cycle => {
+        if (cycle.punchIn && cycle.punchOut) {
+          totalMinutes += Math.round((new Date(cycle.punchOut) - new Date(cycle.punchIn)) / (1000 * 60));
+        }
+      });
+    
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+    
       return {
-        date: punchIn.toDateString(),
-        hoursWorked: durationHours,
+        date: record.date.toDateString(),
+        hoursWorked: hours,
+        minutesWorked: minutes,
       };
     });
+    
 
     res.json(logs);
   } catch (err) {

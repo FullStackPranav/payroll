@@ -2,7 +2,9 @@ import User from "../model/User.js";
 
 export const getAllUsers=async(req,res)=>{
     try{
-        const users=await User.find().select('-password');
+        const users=await User.find().select('-password')
+        .populate('jobRole', 'name hourlyRate');
+        
         res.status(200).json(users);
     }catch(err){
         res.status(500).json({messsage:'server error while fetching users'});
@@ -11,7 +13,9 @@ export const getAllUsers=async(req,res)=>{
 
 export const getUserById= async(req,res)=>{
     try{
-        const user =await User.findById(req.params.id).select('-password');
+        const user =await User.findById(req.params.id)
+        .select('-password')
+        .populate('jobRole', 'name hourlyRate');
         if(!user)return res.status(404).json({message:'user not found'});
         res.json(user);
     }catch(err){

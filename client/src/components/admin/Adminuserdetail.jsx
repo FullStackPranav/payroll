@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link,useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 const AdminUserDetail = () => {
   const { id } = useParams();
@@ -10,11 +10,12 @@ const AdminUserDetail = () => {
   const [logs, setLogs] = useState([]);
   const [week, setWeek] = useState('');
   const [year, setYear] = useState('');
-  const [roles, setRoles] = useState([]); // ✅ NEW: All available roles
-  const [selectedRole, setSelectedRole] = useState(''); // ✅ NEW: selected role
+  const [roles, setRoles] = useState([]); // All available roles
+  const [selectedRole, setSelectedRole] = useState(''); // selected role
 
   const token = localStorage.getItem('token');
 
+  // Fetch user details
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -23,12 +24,13 @@ const AdminUserDetail = () => {
         });
         setUser(res.data);
         setStatus(res.data.status);
-        setSelectedRole(res.data.jobRole?._id || ''); // ✅ preselect user's current role if set
+        setSelectedRole(res.data.jobRole?._id || '');
       } catch (err) {
         console.error('Error fetching user', err);
       }
     };
 
+    // Fetch all roles
     const fetchRoles = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/employee-roles', {
@@ -45,14 +47,13 @@ const AdminUserDetail = () => {
     fetchRoles();
   }, [id, token]);
 
+  // Update user status
   const handleStatusChange = async () => {
     try {
       const res = await axios.put(
         `http://localhost:5000/api/users/${id}/status`,
         { status: status === 'active' ? 'inactive' : 'active' },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setUser(res.data.user);
       setStatus(res.data.user.status);
@@ -62,7 +63,12 @@ const AdminUserDetail = () => {
     }
   };
 
+  // Assign job role and refresh user info
   const handleAssignRole = async () => {
+    if (!selectedRole) {
+      alert('Please select a role before assigning.');
+      return;
+    }
     try {
       await axios.put(
         `http://localhost:5000/api/users/${id}/assign-job-role`,
@@ -70,12 +76,20 @@ const AdminUserDetail = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert('Job role assigned successfully!');
+
+      // Refresh user info to show updated jobRole
+      const res = await axios.get(`http://localhost:5000/api/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUser(res.data);
+      setSelectedRole(res.data.jobRole?._id || '');
     } catch (err) {
       console.error('Error assigning role', err);
       alert('Failed to assign role');
     }
   };
 
+  // Fetch attendance logs
   useEffect(() => {
     const fetchLogs = async () => {
       try {
@@ -97,7 +111,8 @@ const AdminUserDetail = () => {
     <div style={{ padding: '2rem' }}>
       <h2>{user.name}'s Details</h2>
       <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Role:</strong> {user.role}</p>
+      {/* Show assigned job role name instead of user.role */}
+      <p><strong>Role:</strong> {user.jobRole ? user.jobRole.name : 'Not Assigned'}</p>
       <p><strong>Status:</strong> {status}</p>
       <button onClick={handleStatusChange}>
         Set {status === 'active' ? 'Inactive' : 'Active'}
@@ -105,7 +120,7 @@ const AdminUserDetail = () => {
 
       <br /><br />
 
-      {/* ✅ Role Assignment Section */}
+      {/* Role Assignment Section */}
       <h3>Assign Job Role</h3>
       <select
         value={selectedRole}
@@ -119,9 +134,7 @@ const AdminUserDetail = () => {
           </option>
         ))}
       </select>
-      
-
-      <button></button>
+      <button onClick={handleAssignRole}>Assign Role</button>
 
       <br /><br />
       <h3>Attendance Logs</h3>
@@ -164,8 +177,8 @@ const AdminUserDetail = () => {
       <br />
 
       <Link to={`/admin/users/${id}/payslips`}>
-      <button>View Payslips</button>
-    </Link>
+        <button>View Payslips</button>
+      </Link>
       <button onClick={() => navigate(-1)}>Go Back</button>
     </div>
   );
