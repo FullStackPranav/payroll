@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['admin', 'employee'], default: 'employee' },
   status: { type: String, enum: ['active', 'inactive'], default: 'inactive' },
 
-  jobRole: {  // ⬅️ NEW FIELD TO CONNECT TO EMPLOYEEROLE MODEL
+  jobRole: {  
     type: mongoose.Schema.Types.ObjectId,
     ref: 'EmployeeRole',
     default: null,

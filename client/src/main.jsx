@@ -12,6 +12,8 @@ import AdminDashboard from './components/admin/admindashboard';
 import AdminUserList from './components/admin/adminviewusers';
 import AdminUserDetail from './components/admin/Adminuserdetail';
 import AdminRolesPage from './components/admin/adminsetrole';
+import PayslipDetail from './components/admin/PayslipDetail';
+import AdminUserPayslipPage from './components/admin/AdminUserPayslipPage';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -28,6 +30,10 @@ createRoot(document.getElementById('root')).render(
 
         <Route path="/employee-dashboard"element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}/>
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />
+
+        <Route path="/admin/users/:id/payslips" element={<AdminUserPayslipPage />} />
+        <Route path="/admin/users/:id/payslip/:year/:month" element={<PayslipDetail />} />
+
       </Routes>
     </BrowserRouter>
   </StrictMode>

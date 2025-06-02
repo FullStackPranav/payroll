@@ -18,7 +18,7 @@ app.use(express.json());
 // 👇 Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/attendance', attendanceRoutes);
-app.use('/api', adminRoutes); // NOTE: Only this one now covers both /users and /employee-roles
+app.use('/api', adminRoutes); // ✅ This will include the payslip route
 
 connectDB();
 

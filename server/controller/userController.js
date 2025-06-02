@@ -33,3 +33,22 @@ export const updateUserStatus=async(req,res)=>{
             res.status(500).json({message:'server error'});
         }
 }
+
+export const assignJobRole=async(req,res)=>{
+    try{
+        const{id}=req.params;
+        const{jobRoleId}=req.body;
+
+        const user=await User.findById(id);
+        if(!user)return res.status(404).json({error:'user not found'});
+
+        user.jobRole=jobRoleId;
+        await user.save();
+
+        res.json({message:'job role assigned succesfully',user});
+    }
+    catch(error){
+        console.eroor('error while creating job role',error);
+        res.status(500).json({error:'server error'});
+    }
+}

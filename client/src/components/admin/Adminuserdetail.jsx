@@ -10,6 +10,9 @@ const AdminUserDetail = () => {
   const [logs, setLogs] = useState([]);
   const [week, setWeek] = useState('');
   const [year, setYear] = useState('');
+  const [roles, setRoles] = useState([]); // ✅ NEW: All available roles
+  const [selectedRole, setSelectedRole] = useState(''); // ✅ NEW: selected role
+
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -20,12 +23,26 @@ const AdminUserDetail = () => {
         });
         setUser(res.data);
         setStatus(res.data.status);
+        setSelectedRole(res.data.jobRole?._id || ''); // ✅ preselect user's current role if set
       } catch (err) {
         console.error('Error fetching user', err);
       }
     };
 
+    const fetchRoles = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/employee-roles', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = res.data;
+        setRoles(Array.isArray(data) ? data : data.roles || []);
+      } catch (err) {
+        console.error('Error fetching roles', err);
+      }
+    };
+
     fetchUser();
+    fetchRoles();
   }, [id, token]);
 
   const handleStatusChange = async () => {
@@ -42,6 +59,20 @@ const AdminUserDetail = () => {
       alert('Status updated');
     } catch (err) {
       console.error('Error updating status', err);
+    }
+  };
+
+  const handleAssignRole = async () => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/users/${id}/assign-job-role`,
+        { jobRoleId: selectedRole },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('Job role assigned successfully!');
+    } catch (err) {
+      console.error('Error assigning role', err);
+      alert('Failed to assign role');
     }
   };
 
@@ -70,6 +101,26 @@ const AdminUserDetail = () => {
       <p><strong>Status:</strong> {status}</p>
       <button onClick={handleStatusChange}>
         Set {status === 'active' ? 'Inactive' : 'Active'}
+      </button>
+
+      <br /><br />
+
+      {/* ✅ Role Assignment Section */}
+      <h3>Assign Job Role</h3>
+      <select
+        value={selectedRole}
+        onChange={(e) => setSelectedRole(e.target.value)}
+        style={{ padding: '0.5rem', marginRight: '1rem' }}
+      >
+        <option value="">-- Select Role --</option>
+        {roles.map((role) => (
+          <option key={role._id} value={role._id}>
+            {role.name} - ₹{role.hourlyRate}/hr
+          </option>
+        ))}
+      </select>
+      <button onClick={handleAssignRole} disabled={!selectedRole}>
+        Assign Role
       </button>
 
       <br /><br />
