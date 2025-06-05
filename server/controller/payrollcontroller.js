@@ -37,53 +37,13 @@ export const getAllEmployeeRoles = async (req, res) => {
 
 
 export const getPayslipData = async (req, res) => {
-  const { id } = req.params;
+  // Use ID from params if present (admin view), else use ID from token (employee view)
+  const userId = req.params.id || req.user.id;
   const { year, month } = req.query;
 
-  try {
-    const user = await User.findById(id).populate('jobRole');
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    // Fix template literal usage and typo in variable name
-    const startOfMonth = moment.utc(`${year}-${month}-01`).startOf('month').toDate();
-    const endOfMonth = moment.utc(startOfMonth).endOf('month').toDate();
-
-    const logs = await Attendance.find({
-      user: id,
-      date: {
-        $gte: startOfMonth,
-        $lte: endOfMonth
-      }
-    });
-
-    // Fix: use workedHours instead of hoursWorked and safely handle missing values
-    const totalHours = logs.reduce((sum, log) => sum + (log.workedHours || 0), 0);
-
-    const hourlyRate = user.jobRole?.hourlyRate || 0;
-    const totalPay = totalHours * hourlyRate;
-
-    res.json({
-      employee: {
-        name: user.name,
-        role: user.jobRole?.name || 'Not Assigned',
-        hourlyRate,
-      },
-      month,
-      year,
-      totalHours,
-      totalPay
-    });
-
-  } catch (err) {
-    console.error('Error generating payslip:', err);
-    res.status(500).json({ message: 'Server error while generating payslip' });
+  if (!year || !month) {
+    return res.status(400).json({ message: "Year and month query parameters are required" });
   }
-};
-
-// @desc Get list of months from user join date till now
-export const getLoggedInUserPayslipData = async (req, res) => {
-  const { year, month } = req.query;
-  const userId = req.user.id;
 
   try {
     const user = await User.findById(userId).populate('jobRole');
@@ -94,10 +54,7 @@ export const getLoggedInUserPayslipData = async (req, res) => {
 
     const logs = await Attendance.find({
       user: userId,
-      date: {
-        $gte: startOfMonth,
-        $lte: endOfMonth
-      }
+      date: { $gte: startOfMonth, $lte: endOfMonth }
     });
 
     const totalHours = logs.reduce((sum, log) => sum + (log.workedHours || 0), 0);
@@ -121,4 +78,8 @@ export const getLoggedInUserPayslipData = async (req, res) => {
     res.status(500).json({ message: 'Server error while generating payslip' });
   }
 };
+
+
+// @desc Get list of months from user join date till now
+
 

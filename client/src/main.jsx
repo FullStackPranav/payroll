@@ -14,7 +14,10 @@ import AdminUserDetail from './components/admin/Adminuserdetail';
 import AdminRolesPage from './components/admin/adminsetrole';
 import PayslipDetail from './components/admin/PayslipDetail';
 import AdminUserPayslipPage from './components/admin/AdminUserPayslipPage';
-import PayslipList from './components/employee/paysliplist';
+import Employeelistpayslip from './components/employee/employeepaysliplist';
+import EmployeePayslipDetail from './components/employee/payslip';
+import ShiftCreate from './components/admin/ShiftCreate';
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -36,12 +39,14 @@ createRoot(document.getElementById('root')).render(
         <Route path="/admin/users/:id" element={<AdminUserDetail />} />
         <Route path="/admin/users/:id/payslips" element={<AdminUserPayslipPage />} />
         <Route path="/admin/users/:id/payslip/:year/:month" element={<PayslipDetail />} />
+         <Route path="/adminviewshifts" element={<ShiftCreate />} />
+
 
        {/* employee */}
 
-       <Route path="/employee-dashboard"element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}/>
-       <Route path="/employee/payslips"element={<ProtectedRoute><PayslipList /></ProtectedRoute>}/>
-       <Route path="/employee/payslips/:year/:month"element={<ProtectedRoute><PayslipDetail /></ProtectedRoute>}/>
+        <Route path="/employee-dashboard"element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}/>
+        <Route path="/employee/payslips"element={<ProtectedRoute><Employeelistpayslip /></ProtectedRoute>}/>
+        <Route path="/employee/payslip/me"element={<ProtectedRoute><EmployeePayslipDetail /></ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>
   </StrictMode>

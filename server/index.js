@@ -6,6 +6,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
 import adminRoutes from './routes/adminroutes.js'; // Will now include both user and role routes
+import shiftRoutes from './routes/shiftRoutes.js'
 
 dotenv.config();
 
@@ -19,6 +20,8 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api', adminRoutes); // ✅ This will include the payslip route
+app.use('/uploads', express.static('uploads'));
+app.use('/api/shifts',shiftRoutes);
 
 connectDB();
 

@@ -11,7 +11,7 @@ import {
 import {
   createEmployeeRole,
   getAllEmployeeRoles,
-  getLoggedInUserPayslipData,
+  
   getPayslipData,
 
 } from '../controller/payrollcontroller.js';
@@ -29,9 +29,12 @@ router.put('/users/:id/status', verifyToken, updateUserStatus);
 
 
 // Payroll
-router.get('/users/:id/payslip',verifyToken,getPayslipData);
-// router.get('/employee/payslips',verifyToken,getLoggedInUserPayslipData)
-router.get('/payslip/me', verifyToken, getLoggedInUserPayslipData);
+// Payroll routes
+router.get('/users/:id/payslip', verifyToken, getPayslipData); // Admin: fetch by user ID param
+router.get('/employee/payslip/me', verifyToken, getPayslipData);         // Employee: fetch by token user ID
+
+
+
 
 // roles
 router.post('/employee-roles', verifyToken, createEmployeeRole);

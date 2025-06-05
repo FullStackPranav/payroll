@@ -56,11 +56,19 @@ const AdminUserList = () => {
           {filtered.map((user, idx) => (
             <tr key={idx}>
               <td style={{ border: '1px solid black', padding: '8px' }}>
-                {/* ✅ Make name clickable */}
-                <Link to={`/admin/users/${user._id}`} style={{ color: 'blue', textDecoration: 'underline' }}>
-                  {user.name}
-                </Link>
-              </td>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <img 
+      src={`http://localhost:5000/${user.photo || 'uploads/default.png'}`} 
+      alt={user.name}
+      style={{ width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' }}
+    />
+    <Link to={`/admin/users/${user._id}`} style={{ color: 'blue', textDecoration: 'underline' }}>
+      {user.name}
+    </Link>
+  </div>
+</td>
+
+
               <td style={{ border: '1px solid black', padding: '8px' }}>{user.email}</td>
               <td style={{ border: '1px solid black', padding: '8px' }}>{user.jobRole?.name || 'not assigned'}</td>
               <td style={{ border: '1px solid black', padding: '8px' }}>{user.status}</td> {/* ✅ NEW */}

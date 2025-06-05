@@ -10,12 +10,13 @@ const AdminUserDetail = () => {
   const [logs, setLogs] = useState([]);
   const [week, setWeek] = useState('');
   const [year, setYear] = useState('');
-  const [roles, setRoles] = useState([]); // All available roles
-  const [selectedRole, setSelectedRole] = useState(''); // selected role
+  const [roles, setRoles] = useState([]);
+  const [selectedRole, setSelectedRole] = useState('');
+  const [shifts, setShifts] = useState([]);
+  const [selectedShift, setSelectedShift] = useState('');
 
   const token = localStorage.getItem('token');
 
-  // Fetch user details
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -25,12 +26,12 @@ const AdminUserDetail = () => {
         setUser(res.data);
         setStatus(res.data.status);
         setSelectedRole(res.data.jobRole?._id || '');
+        setSelectedShift(res.data.shift?._id || '');
       } catch (err) {
         console.error('Error fetching user', err);
       }
     };
 
-    // Fetch all roles
     const fetchRoles = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/employee-roles', {
@@ -43,11 +44,22 @@ const AdminUserDetail = () => {
       }
     };
 
+    const fetchShifts = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/shifts/shifts', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setShifts(res.data);
+      } catch (err) {
+        console.error('Error fetching shifts', err);
+      }
+    };
+
     fetchUser();
     fetchRoles();
+    fetchShifts();
   }, [id, token]);
 
-  // Update user status
   const handleStatusChange = async () => {
     try {
       const res = await axios.put(
@@ -63,7 +75,6 @@ const AdminUserDetail = () => {
     }
   };
 
-  // Assign job role and refresh user info
   const handleAssignRole = async () => {
     if (!selectedRole) {
       alert('Please select a role before assigning.');
@@ -76,8 +87,6 @@ const AdminUserDetail = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert('Job role assigned successfully!');
-
-      // Refresh user info to show updated jobRole
       const res = await axios.get(`http://localhost:5000/api/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -89,7 +98,31 @@ const AdminUserDetail = () => {
     }
   };
 
-  // Fetch attendance logs
+  const handleAssignShift = async () => {
+    if (!selectedShift) {
+      alert('Please select a shift');
+      return;
+    }
+
+    try {
+      await axios.post(
+        'http://localhost:5000/api/shifts/assign-shift',
+        { userId: id, shiftId: selectedShift },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert('Shift assigned successfully!');
+
+      const res = await axios.get(`http://localhost:5000/api/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUser(res.data);
+    } catch (err) {
+      console.error('Error assigning shift', err);
+      alert('Failed to assign shift');
+    }
+  };
+
   useEffect(() => {
     const fetchLogs = async () => {
       try {
@@ -111,8 +144,8 @@ const AdminUserDetail = () => {
     <div style={{ padding: '2rem' }}>
       <h2>{user.name}'s Details</h2>
       <p><strong>Email:</strong> {user.email}</p>
-      {/* Show assigned job role name instead of user.role */}
       <p><strong>Role:</strong> {user.jobRole ? user.jobRole.name : 'Not Assigned'}</p>
+      <p><strong>Assigned Shift:</strong> {user.shift ? user.shift.name : 'Not Assigned'}</p>
       <p><strong>Status:</strong> {status}</p>
       <button onClick={handleStatusChange}>
         Set {status === 'active' ? 'Inactive' : 'Active'}
@@ -120,7 +153,6 @@ const AdminUserDetail = () => {
 
       <br /><br />
 
-      {/* Role Assignment Section */}
       <h3>Assign Job Role</h3>
       <select
         value={selectedRole}
@@ -135,6 +167,23 @@ const AdminUserDetail = () => {
         ))}
       </select>
       <button onClick={handleAssignRole}>Assign Role</button>
+
+      <br /><br />
+
+      <h3>Assign Shift</h3>
+      <select
+        value={selectedShift}
+        onChange={(e) => setSelectedShift(e.target.value)}
+        style={{ padding: '0.5rem', marginRight: '1rem' }}
+      >
+        <option value="">-- Select Shift --</option>
+        {shifts.map((shift) => (
+          <option key={shift._id} value={shift._id}>
+            {shift.name} ({shift.days.join(', ')}, {shift.startTime} - {shift.endTime})
+          </option>
+        ))}
+      </select>
+      <button onClick={handleAssignShift}>Assign Shift</button>
 
       <br /><br />
       <h3>Attendance Logs</h3>

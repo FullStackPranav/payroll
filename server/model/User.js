@@ -11,6 +11,16 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'EmployeeRole',
     default: null,
+  },
+  photo:{
+    type:String,
+    default:'',
+  },
+  shift:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'Shift',
+    default:null,
+
   }
 
 }, { timestamps: true });

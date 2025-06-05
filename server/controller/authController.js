@@ -1,15 +1,22 @@
+
+
+
+// REGISTER USER
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../model/User.js';
 
-
-// REGISTER USER
+// REGISTER USER with image
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
-
   try {
+    const { name, email, password } = req.body;
+    const photoPath = req.file ? req.file.path : ''; // image path from multer
+
     console.log("Register endpoint hit");
     console.log("Received data:", req.body);
+    if (req.file) {
+      console.log("Photo uploaded:", req.file.filename);
+    }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -20,9 +27,14 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log("Password hashed");
 
-    const newUser = new User({ name, email, password: hashedPassword });
-    await newUser.save();
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      photo: photoPath,
+    });
 
+    await newUser.save();
     console.log("User saved:", newUser);
 
     res.status(201).json({ message: 'User registered successfully' });
@@ -31,6 +43,9 @@ const registerUser = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
 
 // LOGIN USER
 const loginUser = async (req, res) => {

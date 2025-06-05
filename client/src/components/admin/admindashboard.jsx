@@ -25,6 +25,10 @@ const AdminDashboard = () => {
   <button>View Roles</button>
 </Link>
 <br></br>
+<Link to="/adminviewshifts">
+  <button>View Shifts</button>
+</Link>
+<br></br>
       <button onClick={logout}>Log OUt</button>
     </div>
     </>
