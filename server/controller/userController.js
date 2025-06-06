@@ -15,7 +15,8 @@ export const getUserById= async(req,res)=>{
     try{
         const user =await User.findById(req.params.id)
         .select('-password')
-        .populate('jobRole', 'name hourlyRate');
+        .populate('jobRole', 'name hourlyRate')
+        .populate('shift','name');
         if(!user)return res.status(404).json({message:'user not found'});
         res.json(user);
     }catch(err){

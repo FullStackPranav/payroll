@@ -26,28 +26,53 @@ export const punchIn = async (req, res) => {
       });
     }
 
-    // Check if there is already an open punch-in without punch-out
     const openCycle = record.punchCycles.find(cycle => !cycle.punchOut);
     if (openCycle) {
       return res.status(400).json({ message: "Already punched in, please punch out first" });
     }
 
-    // Add new punch cycle with punchIn time
-    record.punchCycles.push({ punchIn: new Date() });
+    const user = await User.findById(userId).populate('shift');
+    const now = new Date();
+
+    let loginStatus = null;
+
+    if (user && user.shift && user.shift.startTime) {
+      const shiftStart = new Date();
+      const [hours, minutes] = user.shift.startTime.split(':').map(Number);
+      shiftStart.setHours(hours, minutes, 0, 0);
+
+      const diffInMinutes = (now - shiftStart) / (1000 * 60);
+
+      if (diffInMinutes < -15) {
+        loginStatus = 'Early';
+      } else if (diffInMinutes >= -15 && diffInMinutes <= 10) {
+        loginStatus = 'On Time';
+      } else {
+        loginStatus = 'Late';
+      }
+    }
+
+    // Add new punch cycle with punchIn and compliance
+    record.punchCycles.push({
+      punchIn: now,
+      compliance: {
+        loginStatus,
+      }
+    });
 
     await record.save();
-    res.status(200).json({ message: "Punch in recorded" });
+    res.status(200).json({ message: "Punch in recorded", loginStatus });
   } catch (err) {
     console.error("PunchIn Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+
 export const punchOut = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Find today's attendance record
     const record = await Attendance.findOne({
       user: userId,
       date: dayjs().startOf('day').toDate(),
@@ -57,28 +82,50 @@ export const punchOut = async (req, res) => {
       return res.status(400).json({ message: "No attendance record for today found" });
     }
 
-    // Find open punch cycle without punchOut
     const openCycle = record.punchCycles.find(cycle => !cycle.punchOut);
     if (!openCycle) {
       return res.status(400).json({ message: "No open punch-in found" });
     }
 
-    // Set punchOut time
-    openCycle.punchOut = new Date();
+    const now = new Date();
+    openCycle.punchOut = now;
 
-    // Calculate worked hours for this cycle in hours
+    // Fetch user and their shift
+    const user = await User.findById(userId).populate('shift');
+    let logoutStatus = null;
+
+    if (user && user.shift && user.shift.endTime) {
+      const shiftEnd = new Date();
+      const [hours, minutes] = user.shift.endTime.split(':').map(Number);
+      shiftEnd.setHours(hours, minutes, 0, 0);
+
+      const diffInMinutes = (now - shiftEnd) / (1000 * 60);
+
+      if (diffInMinutes < -15) {
+        logoutStatus = 'Early';
+      } else if (diffInMinutes >= -15 && diffInMinutes <= 10) {
+        logoutStatus = 'On Time';
+      } else {
+        logoutStatus = 'Late';
+      }
+    }
+
+    if (!openCycle.compliance) {
+      openCycle.compliance = {};
+    }
+    openCycle.compliance.logoutStatus = logoutStatus;
+
     const workedHoursForCycle = (openCycle.punchOut - openCycle.punchIn) / (1000 * 60 * 60);
-
-    // Add to total workedHours for the day
     record.workedHours = (record.workedHours || 0) + workedHoursForCycle;
 
     await record.save();
-    res.status(200).json({ message: "Punch out recorded", workedHours: record.workedHours.toFixed(2) });
+    res.status(200).json({ message: "Punch out recorded", logoutStatus, workedHours: record.workedHours.toFixed(2) });
   } catch (err) {
     console.error("PunchOut Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 export const getDailyLogs = async (req, res) => {
@@ -141,3 +188,37 @@ export const getDailyLogs = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch logs' });
   }
 };
+
+export const getMonthlyLogs = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { year, month } = req.query;
+
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59, 999); // end of month
+
+    const records = await Attendance.find({
+      user: userId,
+      date: { $gte: startDate, $lte: endDate }
+    }).sort({ date: 1 });
+
+    const logs = records.map(record => {
+      return {
+        date: record.date.toDateString(),
+        punchCycles: record.punchCycles.map(cycle => ({
+          punchIn: cycle.punchIn,
+          punchOut: cycle.punchOut,
+          loginStatus: cycle.compliance?.loginStatus,
+          logoutStatus: cycle.compliance?.logoutStatus,
+        })),
+        totalHours: record.workedHours?.toFixed(2) || '0.00'
+      };
+    });
+
+    res.json(logs);
+  } catch (err) {
+    console.error('Monthly Log Fetch Error:', err);
+    res.status(500).json({ message: 'Failed to fetch monthly logs' });
+  }
+};
+

@@ -6,11 +6,20 @@ const attendanceSchema = new mongoose.Schema({
   punchCycles: [
     {
       punchIn: { type: Date, required: true },
-      punchOut: { type: Date }
+      punchOut: { type: Date },
+      compliance: {
+        loginStatus: {
+          type: String,
+          enum: ['Early', 'On Time', 'Late'],
+        },
+        logoutStatus: {
+          type: String,
+          enum: ['Early', 'On Time', 'Late'],
+        }
+      }
     }
   ],
   workedHours: { type: Number, default: 0 }
 }, { timestamps: true });
-
 
 export default mongoose.model('Attendance', attendanceSchema);

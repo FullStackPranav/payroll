@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDailyLogs, punchIn, punchOut } from '../controller/attendanceController.js';
+import { getDailyLogs, getMonthlyLogs, punchIn, punchOut } from '../controller/attendanceController.js';
 import verifyToken from '../middleware/verifyToken.js';
 
 
@@ -10,5 +10,7 @@ router.post('/punchin',verifyToken,punchIn);
 router.post('/punchout',verifyToken,punchOut);
 
 router.get('/logs',verifyToken,getDailyLogs);
+router.get('/:id/monthly-logs', verifyToken,getMonthlyLogs);
+
 
 export default router;

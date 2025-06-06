@@ -5,6 +5,8 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 const AdminUserDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState('');
   const [logs, setLogs] = useState([]);
@@ -15,49 +17,34 @@ const AdminUserDetail = () => {
   const [shifts, setShifts] = useState([]);
   const [selectedShift, setSelectedShift] = useState('');
 
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchAll = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/users/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setUser(res.data);
-        setStatus(res.data.status);
-        setSelectedRole(res.data.jobRole?._id || '');
-        setSelectedShift(res.data.shift?._id || '');
+        const [userRes, rolesRes, shiftsRes] = await Promise.all([
+          axios.get(`http://localhost:5000/api/users/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get('http://localhost:5000/api/employee-roles', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get('http://localhost:5000/api/shifts/shifts', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const userData = userRes.data;
+        setUser(userData);
+        setStatus(userData.status);
+        setSelectedRole(userData.jobRole?._id || '');
+        setSelectedShift(userData.shift?._id || '');
+        setRoles(Array.isArray(rolesRes.data) ? rolesRes.data : rolesRes.data.roles || []);
+        setShifts(shiftsRes.data);
       } catch (err) {
-        console.error('Error fetching user', err);
+        console.error('Initial fetch error:', err);
       }
     };
 
-    const fetchRoles = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/employee-roles', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = res.data;
-        setRoles(Array.isArray(data) ? data : data.roles || []);
-      } catch (err) {
-        console.error('Error fetching roles', err);
-      }
-    };
-
-    const fetchShifts = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/shifts/shifts', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setShifts(res.data);
-      } catch (err) {
-        console.error('Error fetching shifts', err);
-      }
-    };
-
-    fetchUser();
-    fetchRoles();
-    fetchShifts();
+    fetchAll();
   }, [id, token]);
 
   const handleStatusChange = async () => {
@@ -76,10 +63,7 @@ const AdminUserDetail = () => {
   };
 
   const handleAssignRole = async () => {
-    if (!selectedRole) {
-      alert('Please select a role before assigning.');
-      return;
-    }
+    if (!selectedRole) return alert('Please select a role before assigning.');
     try {
       await axios.put(
         `http://localhost:5000/api/users/${id}/assign-job-role`,
@@ -88,7 +72,7 @@ const AdminUserDetail = () => {
       );
       alert('Job role assigned successfully!');
       const res = await axios.get(`http://localhost:5000/api/users/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
       setSelectedRole(res.data.jobRole?._id || '');
@@ -99,24 +83,19 @@ const AdminUserDetail = () => {
   };
 
   const handleAssignShift = async () => {
-    if (!selectedShift) {
-      alert('Please select a shift');
-      return;
-    }
-
+    if (!selectedShift) return alert('Please select a shift.');
     try {
       await axios.post(
         'http://localhost:5000/api/shifts/assign-shift',
         { userId: id, shiftId: selectedShift },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       alert('Shift assigned successfully!');
-
       const res = await axios.get(`http://localhost:5000/api/users/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
+      setSelectedShift(res.data.shift?._id || '');
     } catch (err) {
       console.error('Error assigning shift', err);
       alert('Failed to assign shift');
@@ -128,11 +107,11 @@ const AdminUserDetail = () => {
       try {
         const res = await axios.get('http://localhost:5000/api/attendance/logs', {
           headers: { Authorization: `Bearer ${token}` },
-          params: { id, week, year }
+          params: { id, week, year },
         });
         setLogs(res.data);
       } catch (err) {
-        console.error("Error fetching logs", err);
+        console.error('Error fetching logs', err);
       }
     };
     fetchLogs();
@@ -147,6 +126,7 @@ const AdminUserDetail = () => {
       <p><strong>Role:</strong> {user.jobRole ? user.jobRole.name : 'Not Assigned'}</p>
       <p><strong>Assigned Shift:</strong> {user.shift ? user.shift.name : 'Not Assigned'}</p>
       <p><strong>Status:</strong> {status}</p>
+
       <button onClick={handleStatusChange}>
         Set {status === 'active' ? 'Inactive' : 'Active'}
       </button>
@@ -217,7 +197,10 @@ const AdminUserDetail = () => {
           {logs.map((log, index) => (
             <tr key={index}>
               <td style={{ border: "1px solid black", padding: "8px" }}>{log.date}</td>
-              <td style={{ border: "1px solid black", padding: "8px" }}>{log.hoursWorked} hrs</td>
+              <td style={{ border: "1px solid black", padding: "8px" }}>
+                {log.hoursWorked} hr{log.hoursWorked !== 1 ? 's' : ''}
+                {log.minutesWorked > 0 ? ` ${log.minutesWorked} min` : ''}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -228,7 +211,9 @@ const AdminUserDetail = () => {
       <Link to={`/admin/users/${id}/payslips`}>
         <button>View Payslips</button>
       </Link>
-      <button onClick={() => navigate(-1)}>Go Back</button>
+      <button onClick={() => navigate(-1)} style={{ marginLeft: "1rem" }}>
+        Go Back
+      </button>
     </div>
   );
 };
