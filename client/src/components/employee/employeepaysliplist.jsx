@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
+import Navbar from '../navbar';
 
 const Employeelistpayslip = () => {
   const { id } = useParams();
@@ -18,6 +19,7 @@ const Employeelistpayslip = () => {
 
   return (
     <div style={{ padding: '2rem' }}>
+      <Navbar/>
       <h2>Monthly Payslip Summary</h2>
       <table>
         <thead>

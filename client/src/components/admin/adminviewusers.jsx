@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'; // ✅ NEW
+import Navbar from '../navbar';
 
 const AdminUserList = () => {
   const [users, setUsers] = useState([]);
@@ -35,6 +36,7 @@ const AdminUserList = () => {
 
   return (
     <div style={{ padding: '2rem' }}>
+      <Navbar/>
       <h2>All Users</h2>
       <input
         type="text"

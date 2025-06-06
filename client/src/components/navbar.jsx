@@ -16,7 +16,6 @@ const Navbar = () => {
 
   return (
     <nav style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
-      <Link to="/" style={{ marginRight: '15px' }}>Home</Link>
 
       {user?.role === 'admin' && (
         <Link to="/admin-dashboard" style={{ marginRight: '15px' }}>

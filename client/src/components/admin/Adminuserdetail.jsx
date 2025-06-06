@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import Navbar from '../navbar';
 
 const AdminUserDetail = () => {
   const { id } = useParams();
@@ -121,6 +122,7 @@ const AdminUserDetail = () => {
 
   return (
     <div style={{ padding: '2rem' }}>
+        <Navbar/>
       <h2>{user.name}'s Details</h2>
       <p><strong>Email:</strong> {user.email}</p>
       <p><strong>Role:</strong> {user.jobRole ? user.jobRole.name : 'Not Assigned'}</p>

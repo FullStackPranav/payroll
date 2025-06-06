@@ -191,8 +191,15 @@ export const getDailyLogs = async (req, res) => {
 
 export const getMonthlyLogs = async (req, res) => {
   try {
-    const userId = req.params.id;
+    let userId = req.params.id;
+    if (userId === 'me') {
+      userId = req.user.id; // Use logged-in user ID if "me"
+    }
+
     const { year, month } = req.query;
+    if (!year || !month) {
+      return res.status(400).json({ message: 'Year and month query parameters are required' });
+    }
 
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0, 23, 59, 59, 999); // end of month
@@ -221,4 +228,3 @@ export const getMonthlyLogs = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch monthly logs' });
   }
 };
-
