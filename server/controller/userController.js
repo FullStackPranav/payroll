@@ -11,6 +11,24 @@ export const getAllUsers=async(req,res)=>{
     }
 }
 
+export const getEmployeeStats = async (req, res) => {
+  try {
+    const totalEmployees = await User.countDocuments();
+    const activeEmployees = await User.countDocuments({ status: 'active' });
+    const inactiveEmployees = await User.countDocuments({ status: 'inactive' });
+    console.log(activeEmployees,inactiveEmployees,totalEmployees);
+
+    res.status(200).json({
+      totalEmployees,
+      activeEmployees,
+      inactiveEmployees,
+    });
+  } catch (err) {
+    console.error("Error fetching employee stats:", err); 
+    // res.status(500).json({ message: "Server error"})
+  }
+};
+
 export const getUserById= async(req,res)=>{
     try{
         const user =await User.findById(req.params.id)

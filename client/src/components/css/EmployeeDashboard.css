@@ -32,6 +32,7 @@ body {
     padding: 3rem 1rem; /* Consistent padding around the main card */
     color: var(--text-light);
     box-sizing: border-box; /* Include padding in element's total width and height */
+    padding-left: 200px;
 }
 
 .dashboard-card {

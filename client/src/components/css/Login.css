@@ -1,0 +1,158 @@
+/* Login.css */
+
+/* Define CSS Variables for consistency */
+:root {
+    --form-bg: #f9f9f9; /* Light background for the form card */
+    --input-bg: #ffffff; /* White background for inputs */
+    --input-border: #d1d5db; /* Light gray border for inputs */
+    --input-focus-border: #3b82f6; /* Blue for focus ring */
+    --text-primary: #1f2937; /* Dark gray for main text */
+    --text-secondary: #4b5563; /* Medium gray for labels/placeholders */
+    --button-primary: #1d4ed8; /* Strong blue for main button */
+    --button-hover: #1e40af; /* Darker blue on hover */
+    --error-bg: #fee2e2; /* Light red for error background */
+    --error-text: #b91c1c; /* Dark red for error text */
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.2);
+    --shadow-strong: rgba(0, 0, 0, 0.3);
+}
+
+/* Base styling for the login card */
+.login-card {
+    background-color: var(--form-bg);
+    padding: 2.5rem 2.5rem; /* Increased padding */
+    border-radius: 1rem; /* More pronounced rounded corners */
+    box-shadow: 0 10px 25px var(--shadow-medium); /* Stronger shadow */
+    width: 100%;
+    max-width: 448px; /* max-w-md is 28rem = 448px */
+    margin: 0 auto; /* Center the card horizontally */
+    border: 1px solid #e5e7eb; /* Light border */
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.login-card:hover {
+    box-shadow: 0 15px 35px var(--shadow-strong); /* Deeper shadow on hover */
+    transform: translateY(-5px); /* Subtle lift on hover */
+}
+
+/* Input Group for Centering */
+.input-group {
+    margin-bottom: 1.5rem; /* Space between input groups */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items (label and input) horizontally within the group */
+}
+
+.input-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.9rem; /* Slightly smaller font for label */
+    font-weight: 600; /* Bolder label */
+    margin-bottom: 0.6rem; /* Space between label and input */
+    width: 100%; /* Ensure label takes full width for centering */
+    justify-content: center; /* Center the label text and icon */
+}
+
+/* Input Field Styling */
+.login-input {
+    width: 100%; /* Full width within its parent */
+    max-width: 300px; /* Limit max width for a centered, blocky look */
+    padding: 0.9rem 1.2rem; /* Comfortable padding */
+    border: 2px solid var(--input-border); /* Thicker border for blocky feel */
+    border-radius: 0.75rem; /* Rounded corners for blocky look */
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    box-shadow: inset 0 1px 3px var(--shadow-light); /* Subtle inner shadow */
+}
+
+.login-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7; /* Slightly transparent placeholder */
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: var(--input-focus-border); /* Highlight border on focus */
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); /* Stronger blue ring on focus */
+    background-color: #f0f8ff; /* Light blue tint on focus */
+}
+
+/* Login Button Styling */
+.login-button {
+    width: 100%; /* Full width */
+    max-width: 300px; /* Match input max width for alignment */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background-color: var(--button-primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 0.75rem; /* Consistent rounding with inputs */
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin: 0 auto; /* Center the button */
+}
+
+.login-button:hover:not(:disabled) {
+    background-color: var(--button-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.login-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Error Message Box */
+.error-message-box {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--error-text);
+    font-weight: 500;
+    animation: fadeIn 0.3s ease-out; /* Basic fade in for messages */
+}
+
+/* Animation for messages */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 640px) {
+    .login-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .login-input {
+        max-width: 100%; /* Full width on smaller screens */
+    }
+
+    .login-button {
+        max-width: 100%; /* Full width on smaller screens */
+    }
+
+    .input-label {
+        justify-content: flex-start; /* Align labels to start on small screens */
+    }
+}
+.login-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}

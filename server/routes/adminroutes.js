@@ -4,6 +4,7 @@ import verifyToken from '../middleware/verifyToken.js';
 import {
   assignJobRole,
   getAllUsers,
+  getEmployeeStats,
   getUserById,
   updateUserStatus
 } from '../controller/userController.js';
@@ -15,6 +16,8 @@ import {
   getPayslipData,
 
 } from '../controller/payrollcontroller.js';
+import { isAdmin } from '../middleware/isAdmin.js';
+import { updateWrokedHours } from '../controller/attendanceController.js';
 
 const router = express.Router();
 
@@ -22,17 +25,16 @@ const router = express.Router();
 router.get('/users/all', verifyToken, getAllUsers);
 router.get('/users/:id', verifyToken, getUserById);
 router.put('/users/:id/status', verifyToken, updateUserStatus);
+router.get('/admin/totalusers',getEmployeeStats);
 
 
 
 
 
 
-// Payroll
-// Payroll routes
 router.get('/users/:id/payslip', verifyToken, getPayslipData); // Admin: fetch by user ID param
 router.get('/employee/payslip/me', verifyToken, getPayslipData);         // Employee: fetch by token user ID
-
+router.patch('/attendance/:id/adjust-hours',verifyToken,isAdmin,updateWrokedHours)
 
 
 

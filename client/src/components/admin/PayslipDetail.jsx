@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import Navbar from '../navbar';
 
 const PayslipDetail = () => {
   const { id, year, month } = useParams();
   const [data, setData] = useState(null);
   const [logs, setLogs] = useState([]);
+  const [editHours, setEditHours] = useState({});
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
@@ -32,6 +32,7 @@ const PayslipDetail = () => {
         });
         const sortedLogs = res.data.sort((a, b) => new Date(a.date) - new Date(b.date));
         setLogs(sortedLogs);
+        setEditHours({}); // Reset edit state to blank
       } catch (err) {
         console.error('Error fetching attendance logs', err);
       }
@@ -40,6 +41,48 @@ const PayslipDetail = () => {
     fetchPayslip();
     fetchLogs();
   }, [id, year, month, token]);
+
+  const handleInputChange = (id, value) => {
+    setEditHours(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleSave = async (attendanceId) => {
+    const newHours = parseFloat(editHours[attendanceId]);
+    if (isNaN(newHours) || newHours < 0) {
+      alert('Please enter a valid non-negative number for hours.');
+      return;
+    }
+
+    try {
+      await axios.patch(`http://localhost:5000/api/attendance/${attendanceId}/adjust-hours`, {
+        workedHours: newHours
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('Hours updated successfully');
+
+      // Refresh logs and payslip
+      const refreshed = await axios.get(`http://localhost:5000/api/attendance/${id}/monthly-logs`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { year, month }
+      });
+      setLogs(refreshed.data.sort((a, b) => new Date(a.date) - new Date(b.date)));
+      setEditHours({}); // Reset input fields
+
+      const updatedPayslip = await axios.get(`http://localhost:5000/api/users/${id}/payslip`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { year, month }
+      });
+      setData(updatedPayslip.data);
+    } catch (err) {
+      console.error('Error updating worked hours:', err);
+      alert('Failed to update hours');
+    }
+  };
 
   if (!data) return <p>Loading payslip...</p>;
 
@@ -68,24 +111,52 @@ const PayslipDetail = () => {
               <th>Login Status</th>
               <th>Punch Out</th>
               <th>Logout Status</th>
-              <th>Total Hours</th>
+              <th>Current Hours</th>
+              <th>Edit Hours</th>
+              
             </tr>
           </thead>
           <tbody>
-            {logs.map((log, i) =>
-              log.punchCycles.map((cycle, j) => (
-                <tr key={`${i}-${j}`}>
-                  <td>{serialNo++}</td>
-                  <td>{j === 0 ? new Date(log.date).toLocaleDateString() : ''}</td>
-                  <td>{cycle.punchIn ? new Date(cycle.punchIn).toLocaleTimeString() : '—'}</td>
-                  <td>{cycle.loginStatus || '—'}</td>
-                  <td>{cycle.punchOut ? new Date(cycle.punchOut).toLocaleTimeString() : '—'}</td>
-                  <td>{cycle.logoutStatus || '—'}</td>
-                  <td>{j === 0 ? log.totalHours : ''}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
+  {logs.map((log, i) => {
+    const dateStr = new Date(log.date).toLocaleDateString();
+    return (
+      <React.Fragment key={log._id}>
+        {/* Row 1: Show punches and current hours */}
+        {log.punchCycles.map((cycle, j) => (
+          <tr key={`${log._id}-${j}`}>
+            <td>{serialNo++}</td>
+            <td>{j === 0 ? dateStr : ''}</td>
+            <td>{cycle.punchIn ? new Date(cycle.punchIn).toLocaleTimeString() : '—'}</td>
+            <td>{cycle.loginStatus || '—'}</td>
+            <td>{cycle.punchOut ? new Date(cycle.punchOut).toLocaleTimeString() : '—'}</td>
+            <td>{cycle.logoutStatus || '—'}</td>
+            <td>{j === 0 ? log.workedHours || '—' : ''}</td>
+            <td>{''}</td>
+          </tr>
+        ))}
+
+        {/* Row 2: Show editable input */}
+        <tr style={{ backgroundColor: '#f9f9f9' }}>
+          <td colSpan="6" style={{ textAlign: 'right', fontStyle: 'italic' }}>Edit Worked Hours for {dateStr}:</td>
+          <td>
+            <input
+              type="number"
+              min="0"
+              step="0.1"
+              value={editHours[log._id] ?? ''}
+              onChange={(e) => handleInputChange(log._id, e.target.value)}
+              style={{ width: '80px' }}
+            />
+          </td>
+          <td>
+            <button onClick={() => handleSave(log._id)}>Save</button>
+          </td>
+        </tr>
+      </React.Fragment>
+    );
+  })}
+</tbody>
+
         </table>
       )}
       <button onClick={() => navigate(-1)} style={{ marginTop: '1rem' }}>Back</button>

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  console.log("Authorization Header Received:", authHeader); // ✅ Debug
+  // console.log("Authorization Header Received:", authHeader); // ✅ Debug
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });

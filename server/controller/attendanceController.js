@@ -11,44 +11,50 @@ export const punchIn = async (req, res) => {
   try {
     const userId = req.user.id;
 
+    // Fetch user data first
+    const user = await User.findById(userId).populate("shift");
+
+    // **Check if user is inactive**
+    if (user.status !== "active") {
+      return res.status(403).json({ message: "Inactive users cannot punch in" });
+    }
+
     // Find today's attendance record or create a new one
     let record = await Attendance.findOne({
       user: userId,
-      date: dayjs().startOf('day').toDate(),
+      date: dayjs().startOf("day").toDate(),
     });
 
     if (!record) {
       record = new Attendance({
         user: userId,
-        date: dayjs().startOf('day').toDate(),
+        date: dayjs().startOf("day").toDate(),
         punchCycles: [],
         workedHours: 0,
       });
     }
 
-    const openCycle = record.punchCycles.find(cycle => !cycle.punchOut);
+    const openCycle = record.punchCycles.find((cycle) => !cycle.punchOut);
     if (openCycle) {
       return res.status(400).json({ message: "Already punched in, please punch out first" });
     }
 
-    const user = await User.findById(userId).populate('shift');
     const now = new Date();
-
     let loginStatus = null;
 
     if (user && user.shift && user.shift.startTime) {
       const shiftStart = new Date();
-      const [hours, minutes] = user.shift.startTime.split(':').map(Number);
+      const [hours, minutes] = user.shift.startTime.split(":").map(Number);
       shiftStart.setHours(hours, minutes, 0, 0);
 
       const diffInMinutes = (now - shiftStart) / (1000 * 60);
 
       if (diffInMinutes < -15) {
-        loginStatus = 'Early';
+        loginStatus = "Early";
       } else if (diffInMinutes >= -15 && diffInMinutes <= 10) {
-        loginStatus = 'On Time';
+        loginStatus = "On Time";
       } else {
-        loginStatus = 'Late';
+        loginStatus = "Late";
       }
     }
 
@@ -57,7 +63,7 @@ export const punchIn = async (req, res) => {
       punchIn: now,
       compliance: {
         loginStatus,
-      }
+      },
     });
 
     await record.save();
@@ -188,7 +194,6 @@ export const getDailyLogs = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch logs' });
   }
 };
-
 export const getMonthlyLogs = async (req, res) => {
   try {
     let userId = req.params.id;
@@ -210,15 +215,25 @@ export const getMonthlyLogs = async (req, res) => {
     }).sort({ date: 1 });
 
     const logs = records.map(record => {
+      const originalHours = record.punchCycles.reduce((sum, cycle) => {
+        if (cycle.punchIn && cycle.punchOut) {
+          const hours = (new Date(cycle.punchOut) - new Date(cycle.punchIn)) / (1000 * 60 * 60);
+          return sum + hours;
+        }
+        return sum;
+      }, 0);
+
       return {
+        _id: record._id, // Needed for PATCHing
         date: record.date.toDateString(),
         punchCycles: record.punchCycles.map(cycle => ({
           punchIn: cycle.punchIn,
           punchOut: cycle.punchOut,
-          loginStatus: cycle.compliance?.loginStatus,
-          logoutStatus: cycle.compliance?.logoutStatus,
+          loginStatus: cycle.compliance?.loginStatus || null,
+          logoutStatus: cycle.compliance?.logoutStatus || null,
         })),
-        totalHours: record.workedHours?.toFixed(2) || '0.00'
+        originalHours: originalHours.toFixed(2),  // Calculated from punches
+        workedHours: record.workedHours?.toFixed(2) || '' // Admin-set, editable field
       };
     });
 
@@ -228,3 +243,28 @@ export const getMonthlyLogs = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch monthly logs' });
   }
 };
+
+
+export const updateWrokedHours=async(req,res)=>{
+  const{id}=req.params;
+  const{workedHours}=req.body;
+
+  if(typeof workedHours !=='number' || workedHours<0){
+    return res.status(400)({message:'wokred hours must bea  non negative number'})
+
+  }
+
+  try{
+    const attendance = await Attendance.findById(id);
+    if(!attendance){
+      return res.status(404).json({message:'no record found'})
+    }
+    attendance.workedHours=workedHours;
+    await attendance.save()
+    res.json({message:'worked hours updated'})
+  }
+  catch(err){
+    console.error('Error updating hours',err)
+    res.status(500).json({message:'server error while updating worked hours'})
+  }
+}

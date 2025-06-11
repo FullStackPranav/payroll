@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import logout from '../logout';
 import axios from 'axios';
 import Navbar from '../navbar';
-import { useNavigate } from 'react-router-dom'; // ✅ Correct import
+import { useNavigate } from 'react-router-dom';
+import EmployeeSidebar from './EmployeeSidebar';
+import '../css/EmployeeDashboard.css';
 
 const EmployeeDashboard = () => {
   const [message, setMessage] = useState('');
@@ -13,8 +15,8 @@ const EmployeeDashboard = () => {
   const token = localStorage.getItem('token');
   const name = localStorage.getItem('name');
   const email = localStorage.getItem('email');
-
-  const navigate = useNavigate(); // ✅ Correct usage
+  const photo = localStorage.getItem('photo');
+  const navigate = useNavigate();
 
   const punchIn = async () => {
     try {
@@ -55,59 +57,93 @@ const EmployeeDashboard = () => {
 
   return (
     <>
+      <EmployeeSidebar />
       <Navbar />
-      <div style={{ padding: '2rem' }}>
-        <h2>Employee Dashboard</h2>
-        <p><strong>Name:</strong> {name}</p>
-        <p><strong>Email:</strong> {email}</p>
-        {message && <p style={{ color: 'green' }}>{message}</p>}
-        <button onClick={punchIn}>Punch In</button><br />
-        <button onClick={punchOut}>Punch Out</button><br />
+      <div className="dashboard-container">
+        <div className="dashboard-card">
+          <div className="dashboard-hero">
+            <img
+              src={`http://localhost:5000/${photo || 'uploads/default.png'}`}
+              alt={name}
+              style={{
+                width: '70px',
+                height: '70px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                marginBottom: '1rem'
+              }}
+            />
+            <div className="hero-title">Welcome, <span className="hero-name">{name}</span></div>
+            <div className="hero-subtitle">Here’s your attendance overview</div>
+            <div className="hero-email">{email}</div>
+          </div>
 
-        <h3>Attendance Logs</h3>
+          <div className="action-buttons-section">
+            <button onClick={punchIn} className="action-button punch-in-button">Punch In</button>
+            <button onClick={punchOut} className="action-button punch-out-button">Punch Out</button>
+          </div>
 
-        {/* Week and Year Selectors */}
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Week: </label>
-          <select value={week} onChange={(e) => setWeek(e.target.value)}>
-            <option value="">Last 7 Days</option>
-            {[...Array(52)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>Week {i + 1}</option>
-            ))}
-          </select>
+          {message && (
+            <div className={`message-box ${message.includes("Error") ? 'error-message' : 'success-message'}`}>
+              {message}
+            </div>
+          )}
 
-          <label style={{ marginLeft: "1rem" }}>Year: </label>
-          <select value={year} onChange={(e) => setYear(e.target.value)}>
-            <option value="">Select Year</option>
-            {[2023, 2024, 2025].map((yr) => (
-              <option key={yr} value={yr}>{yr}</option>
-            ))}
-          </select>
-        </div>
+          <div className="filters-section">
+            <div className="filter-group">
+              <label className="filter-label">Week:</label>
+              <select className="filter-select" value={week} onChange={(e) => setWeek(e.target.value)}>
+                <option value="">Last 7 Days</option>
+                {[...Array(52)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>Week {i + 1}</option>
+                ))}
+              </select>
+            </div>
 
-        <table style={{ border: "1px solid black", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ border: "1px solid black", padding: "8px" }}>Date</th>
-              <th style={{ border: "1px solid black", padding: "8px" }}>Hours Worked</th>
-            </tr>
-          </thead>
-          <tbody>
-            {logs.map((log, index) => (
-              <tr key={index}>
-                <td style={{ border: "1px solid black", padding: "8px" }}>{log.date}</td>
-                <td style={{ border: "1px solid black", padding: "8px" }}>
-                  {log.hoursWorked > 0 ? `${log.hoursWorked} hr${log.hoursWorked > 1 ? 's' : ''}` : ''}
-                  {log.minutesWorked > 0 ? ` ${log.minutesWorked} min${log.minutesWorked > 1 ? 's' : ''}` : (log.hoursWorked === 0 ? '0 mins' : '')}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            <div className="filter-group">
+              <label className="filter-label">Year:</label>
+              <select className="filter-select" value={year} onChange={(e) => setYear(e.target.value)}>
+                <option value="">Select Year</option>
+                {[2023, 2024, 2025].map((yr) => (
+                  <option key={yr} value={yr}>{yr}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-        {/* View Payslip Button */}
-        <div style={{ marginTop: '2rem' }}>
-          <button onClick={() => navigate('/employee/payslips')}>View Payslip</button>
+          <div className="logs-table-container">
+            <table className="logs-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Hours Worked</th>
+                </tr>
+              </thead>
+              <tbody>
+                {logs.length > 0 ? (
+                  logs.map((log, index) => (
+                    <tr key={index}>
+                      <td>{log.date}</td>
+                      <td>
+                        {log.hoursWorked > 0 ? `${log.hoursWorked} hr${log.hoursWorked > 1 ? 's' : ''}` : ''}
+                        {log.minutesWorked > 0 ? ` ${log.minutesWorked} min${log.minutesWorked > 1 ? 's' : ''}` : (log.hoursWorked === 0 ? '0 mins' : '')}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="2" className="no-logs-message">No logs found for this selection.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <button onClick={() => navigate('/employee/payslips')} className="action-button payslip-button">
+              View Payslip
+            </button>
+          </div>
         </div>
       </div>
     </>

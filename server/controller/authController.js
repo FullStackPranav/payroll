@@ -1,12 +1,12 @@
 
 
 
-// REGISTER USER
+
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../model/User.js';
 
-// REGISTER USER with image
+
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -64,7 +64,7 @@ const loginUser = async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.json({ token, role: user.role, name: user.name, email: user.email });
+    res.json({ token,role: user.role, name: user.name, email: user.email,photo:user.photo || 'uploads/default.png',});
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: 'Server error' });
