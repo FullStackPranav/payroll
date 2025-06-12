@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import AdminSidebar from './AdminSidebar';
+import Navbar from '../navbar';
+import '../css/ShiftCreate.css'; // ✅ Import the stylesheet
 
 const ShiftCreate = () => {
   const [name, setName] = useState('');
@@ -20,7 +23,9 @@ const ShiftCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/shifts/Shifts', { name, days, startTime, endTime }, {
+      await axios.post('http://localhost:5000/api/shifts/Shifts', {
+        name, days, startTime, endTime
+      }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setName('');
@@ -49,33 +54,84 @@ const ShiftCreate = () => {
   }, []);
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h2>Create Shift</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Shift Name" value={name} onChange={e => setName(e.target.value)} required />
-        <div>
-          <label>Days:</label><br />
-          {weekdays.map(day => (
-            <label key={day} style={{ marginRight: '10px' }}>
-              <input type="checkbox" checked={days.includes(day)} onChange={() => toggleDay(day)} />
-              {day}
-            </label>
-          ))}
-        </div>
-        <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} required />
-        <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} required />
-        <button type="submit">Create Shift</button>
-      </form>
+    <>
+      <Navbar />
+      <AdminSidebar />
+      <div className="shift-container">
+        <div className="shift-wrapper">
+          <div className="form-card">
+            <h2 className="form-title">➕ Create New Shift</h2>
+            <form onSubmit={handleSubmit} className="shift-form">
+              <input
+                type="text"
+                placeholder="Shift Name"
+                className="form-input"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                required
+              />
 
-      <h3 style={{ marginTop: '2rem' }}>All Shifts</h3>
-      <ul>
-        {shifts.map((shift, idx) => (
-          <li key={idx}>
-            <strong>{shift.name}</strong>: {shift.days.join(', ')} | {shift.startTime} - {shift.endTime}
-          </li>
-        ))}
-      </ul>
-    </div>
+              <div className="checkbox-group">
+                <label className="form-label">Select Days:</label>
+                <div className="day-checkboxes">
+                  {weekdays.map(day => (
+                    <label key={day} className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={days.includes(day)}
+                        onChange={() => toggleDay(day)}
+                      />
+                      {day}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="time-inputs">
+                <input
+                  type="time"
+                  value={startTime}
+                  onChange={e => setStartTime(e.target.value)}
+                  className="form-input"
+                  required
+                />
+                <input
+                  type="time"
+                  value={endTime}
+                  onChange={e => setEndTime(e.target.value)}
+                  className="form-input"
+                  required
+                />
+              </div>
+
+              <button type="submit" className="submit-button">Create Shift</button>
+            </form>
+          </div>
+
+          <div className="table-card">
+            <h3 className="table-title">📋 All Shifts</h3>
+            <table className="shift-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Days</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {shifts.map((shift, idx) => (
+                  <tr key={idx}>
+                    <td>{shift.name}</td>
+                    <td>{shift.days.join(', ')}</td>
+                    <td>{shift.startTime} - {shift.endTime}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

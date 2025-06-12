@@ -1,6 +1,8 @@
-// src/pages/AdminRolesPage.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Navbar from '../navbar';
+import AdminSidebar from './AdminSidebar';
+import '../css/AdminRolesPage.css'; // ✅ Import the CSS file
 
 const AdminRolesPage = () => {
   const [roles, setRoles] = useState([]);
@@ -9,17 +11,15 @@ const AdminRolesPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const token = localStorage.getItem('token'); // Adjust if stored differently
+  const token = localStorage.getItem('token');
   const BASE_URL = 'http://localhost:5000';
 
-  // Fetch roles
   const fetchRoles = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/employee-roles`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      const data = res.data;
-      setRoles(Array.isArray(data) ? data : data.roles || []);
+      setRoles(Array.isArray(res.data) ? res.data : res.data.roles || []);
     } catch (err) {
       console.error('Error fetching roles', err);
       setRoles([]);
@@ -30,7 +30,6 @@ const AdminRolesPage = () => {
     fetchRoles();
   }, []);
 
-  // Submit new role
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -49,63 +48,82 @@ const AdminRolesPage = () => {
       );
       setName('');
       setHourlyRate('');
-      setSuccess('Role created successfully!');
+      setSuccess('✅ Role created successfully!');
       fetchRoles();
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.error || 'Error creating role');
+      setError(err.response?.data?.error || '❌ Error creating role');
     }
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Job Roles</h2>
+    <>
+      <Navbar />
+      <AdminSidebar />
+      <div className="admin-roles-container">
+        <div className="admin-roles-wrapper">
 
-      <ul className="mb-6">
-        {Array.isArray(roles) && roles.length > 0 ? (
-          roles.map((role) => (
-            <li key={role._id} className="border-b py-2">
-              <span className="font-semibold">{role.name}</span> - ₹{role.hourlyRate}/hr
-            </li>
-          ))
-        ) : (
-          <li className="text-gray-600">No roles found</li>
-        )}
-      </ul>
+          <div className="form-card">
+            <h2 className="form-title">➕ Add New Role</h2>
+            <form onSubmit={handleSubmit} className="form-grid">
+              <div>
+                <label className="form-label">Role Name</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Eg: Developer"
+                />
+              </div>
+              <div>
+                <label className="form-label">Hourly Rate (₹)</label>
+                <input
+                  type="number"
+                  className="form-input"
+                  value={hourlyRate}
+                  onChange={(e) => setHourlyRate(e.target.value)}
+                  placeholder="Eg: 500"
+                />
+              </div>
+              <div className="form-action">
+                <button type="submit" className="submit-button">
+                  Create Role
+                </button>
+              </div>
+            </form>
+            {error && <div className="error-text">{error}</div>}
+            {success && <div className="success-text">{success}</div>}
+          </div>
 
-      <h3 className="text-xl font-semibold mb-2">Add New Role</h3>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Role Name</label>
-          <input
-            type="text"
-            className="w-full border p-2 rounded"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <div className="table-card">
+            <h2 className="table-title">📋 Existing Roles</h2>
+            {roles.length > 0 ? (
+              <div className="table-wrapper">
+                <table className="role-table">
+                  <thead>
+                    <tr>
+                      <th>Role Name</th>
+                      <th>Hourly Rate (₹)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {roles.map((role) => (
+                      <tr key={role._id}>
+                        <td>{role.name}</td>
+                        <td>₹{role.hourlyRate}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="no-data-text">No roles found.</p>
+            )}
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium">Hourly Rate (₹)</label>
-          <input
-            type="number"
-            className="w-full border p-2 rounded"
-            value={hourlyRate}
-            onChange={(e) => setHourlyRate(e.target.value)}
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Create Role
-        </button>
-      </form>
-
-      {error && <p className="text-red-600 mt-2">{error}</p>}
-      {success && <p className="text-green-600 mt-2">{success}</p>}
-    </div>
+      </div>
+    </>
   );
 };
 

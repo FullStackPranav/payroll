@@ -68,15 +68,15 @@ const AdminDashboard = () => {
             </div>
           ) : (
             <div className="stats-cards">
-              <div className="stat-card">
+              <div className="stat-card-total">
                 <h4>Total Employees</h4>
                 <p className="stat-value">{employeeStats.totalEmployees}</p>
               </div>
-              <div className="stat-card">
+              <div className="stat-card-active">
                 <h4>Active Employees</h4>
                 <p className="stat-value active">{employeeStats.activeEmployees}</p>
               </div>
-              <div className="stat-card">
+              <div className="stat-card-inactive">
                 <h4>Inactive Employees</h4>
                 <p className="stat-value inactive">{employeeStats.inactiveEmployees}</p>
               </div>

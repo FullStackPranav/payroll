@@ -1,0 +1,133 @@
+/* Layout wrapper */
+.admin-roles-container {
+  margin-left: 200px; /* Sidebar width */
+  padding: 2rem;
+  min-height: 100vh;
+  background: #f9fafb;
+  padding-top: 3.5rem;
+}
+
+/* Inner content */
+.admin-roles-wrapper {
+  max-width: 900px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Card styles */
+.form-card,
+.table-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Section titles */
+.form-title,
+.table-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1d4ed8;
+}
+
+/* Form layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Form labels */
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Inputs */
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.form-input:focus {
+  border-color: #2563eb;
+}
+
+/* Submit Button */
+.form-action {
+  grid-column: span 2;
+  text-align: right;
+}
+
+.submit-button {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.submit-button:hover {
+  background-color: #1e40af;
+}
+
+/* Feedback messages */
+.error-text {
+  margin-top: 1rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.success-text {
+  margin-top: 1rem;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+/* Table styles */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.role-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.role-table th,
+.role-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.role-table th {
+  background-color: #f3f4f6;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  color: #4b5563;
+}
+
+.role-table tr:hover {
+  background-color: #f9fafb;
+}
+
+/* No data */
+.no-data-text {
+  color: #6b7280;
+  font-style: italic;
+}

@@ -34,10 +34,10 @@ const Navbar = () => {
   return (
    <nav className="navbar">
   <div className="navbar-content">
-    <Link to="/">
+    {/* <Link to="/">
       <Home size={18} />
       <span>Home</span>
-    </Link>
+    </Link> */}
 
     {user?.role === 'admin' && (
       <Link to="/admin-dashboard">

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import '../css/EmployeeSidebar.css';
 
 const EmployeeSidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -17,7 +17,7 @@ const EmployeeSidebar = () => {
         onClick={toggleSidebar}
         style={{
           position: 'fixed',
-          top: '1rem',
+          
           left: isOpen ? '200px' : '10px',
           zIndex: 1001,
           padding: '0.4rem 0.6rem',

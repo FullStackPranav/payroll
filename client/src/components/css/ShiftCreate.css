@@ -1,0 +1,135 @@
+.shift-container {
+  margin-left: 200px; /* Sidebar width */
+  padding-top: 5rem;  /* To avoid navbar (55px) */
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.shift-wrapper {
+  max-width: 900px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Form styling */
+.form-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #2563eb;
+}
+
+.shift-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.form-input:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+/* Days */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #374151;
+}
+
+.day-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.checkbox-label {
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+/* Time inputs side by side */
+.time-inputs {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Submit button */
+.submit-button {
+  align-self: flex-end;
+  background-color: #2563eb;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.submit-button:hover {
+  background-color: #1e40af;
+}
+
+/* Table styling */
+.table-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1e3a8a;
+}
+
+.shift-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.shift-table th,
+.shift-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.shift-table th {
+  background-color: #f3f4f6;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.shift-table tr:hover {
+  background-color: #f9fafb;
+}

@@ -41,6 +41,36 @@
   text-align: center;
 }
 
+
+
+.stat-card-total{
+  background-color: blue;
+  border-radius: 12px;
+  padding: 1.5rem;
+  flex: 1;
+  min-width: 200px;
+  box-shadow:0 4px 10px rgb(109, 6, 6);
+}
+
+.stat-card-active{
+  background-color: green;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 200px;
+  box-shadow:0 4px 10px rgb(109, 6, 6); ;
+  flex: 1;
+}
+
+.stat-card-inactive{
+  background-color: red;
+  flex: 1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 200px;
+  box-shadow:0 4px 10px rgb(109, 6, 6); ;
+}
+
+
 .stat-value {
   font-size: 2rem;
   font-weight: bold;
