@@ -10,14 +10,14 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div>
+    <>
       {/* Toggle Button */}
       <button
         className="sidebar-toggle"
         onClick={toggleSidebar}
         style={{
           position: 'fixed',
-          
+          top: '1rem',
           left: isOpen ? '200px' : '10px',
           zIndex: 1001,
           padding: '0.4rem 0.6rem',
@@ -27,29 +27,29 @@ const AdminSidebar = () => {
           borderRadius: '4px',
           cursor: 'pointer',
           transition: 'left 0.3s ease',
-          height:'55px',
-          width:'55px'
+          height: '30px',
+          width: '30px'
         }}
       >
         ☰
       </button>
 
       {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
+      <div className={`admin-sidebar ${isOpen ? 'open' : 'closed'}`}>
         <h3>Admin Menu</h3>
         <ul>
           <li>
-            <Link to="/adminviewusers">View Employees</Link>
+            <Link to="/adminviewusers" onClick={() => setIsOpen(false)}>View Employees</Link>
           </li>
           <li>
-            <Link to="/adminviewroles">View Roles</Link>
+            <Link to="/adminviewroles" onClick={() => setIsOpen(false)}>View Roles</Link>
           </li>
           <li>
-            <Link to="/adminviewshifts">View Shifts</Link>
+            <Link to="/adminviewshifts" onClick={() => setIsOpen(false)}>View Shifts</Link>
           </li>
         </ul>
       </div>
-    </div>
+    </>
   );
 };
 

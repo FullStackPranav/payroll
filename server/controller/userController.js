@@ -2,7 +2,7 @@ import User from "../model/User.js";
 
 export const getAllUsers=async(req,res)=>{
     try{
-        const users=await User.find().select('-password')
+        const users=await User.find({role:'employee'}).select('-password')
         .populate('jobRole', 'name hourlyRate');
         
         res.status(200).json(users);
@@ -13,9 +13,9 @@ export const getAllUsers=async(req,res)=>{
 
 export const getEmployeeStats = async (req, res) => {
   try {
-    const totalEmployees = await User.countDocuments();
-    const activeEmployees = await User.countDocuments({ status: 'active' });
-    const inactiveEmployees = await User.countDocuments({ status: 'inactive' });
+    const totalEmployees = await User.countDocuments({role:'employee'});
+    const activeEmployees = await User.countDocuments({ status: 'active',role:'employee' });
+    const inactiveEmployees = await User.countDocuments({ status: 'inactive',role:'employee' });
     console.log(activeEmployees,inactiveEmployees,totalEmployees);
 
     res.status(200).json({

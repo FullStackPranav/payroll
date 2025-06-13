@@ -6,18 +6,17 @@ const EmployeeSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(prev => !prev);
   };
 
   return (
-    <div>
-      {/* Toggle Button */}
+    <>
       <button
         className="sidebar-toggle"
         onClick={toggleSidebar}
         style={{
           position: 'fixed',
-          
+          top: '1rem',
           left: isOpen ? '200px' : '10px',
           zIndex: 1001,
           padding: '0.4rem 0.6rem',
@@ -29,19 +28,18 @@ const EmployeeSidebar = () => {
           transition: 'left 0.3s ease'
         }}
       >
-        {isOpen ? '☰' : '☰'}
+        ☰
       </button>
 
-      {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
+      <div className={`employee-sidebar ${isOpen ? 'open' : 'closed'}`}>
         <h3>Employee Menu</h3>
         <ul>
           <li>
-            <Link to="/employee/payslips">View Payslips</Link>
+            <Link to="/employee/payslips" onClick={() => setIsOpen(false)}>View Payslips</Link>
           </li>
         </ul>
       </div>
-    </div>
+    </>
   );
 };
 

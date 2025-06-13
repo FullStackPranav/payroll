@@ -25,7 +25,7 @@ const router = express.Router();
 router.get('/users/all', verifyToken, getAllUsers);
 router.get('/users/:id', verifyToken, getUserById);
 router.put('/users/:id/status', verifyToken, updateUserStatus);
-router.get('/admin/totalusers',getEmployeeStats);
+router.get('/admin/totalusers',verifyToken,getEmployeeStats);
 
 
 

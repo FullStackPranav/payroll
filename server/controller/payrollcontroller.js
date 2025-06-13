@@ -25,7 +25,7 @@ export const createEmployeeRole = async (req, res) => {
   }
 };
 
-// @desc    Get all roles
+
 export const getAllEmployeeRoles = async (req, res) => {
   try {
     const roles = await employeeRoleModel.find().sort({ createdAt: -1 });
@@ -46,7 +46,7 @@ export const getPayslipData = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(userId).populate('jobRole');
+    const user = await User.findById(userId).populate('jobRole').populate('shift');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const startOfMonth = moment.utc(`${year}-${month}-01`).startOf('month').toDate();
@@ -60,12 +60,14 @@ export const getPayslipData = async (req, res) => {
     const totalHours = logs.reduce((sum, log) => sum + (log.workedHours || 0), 0);
     const hourlyRate = user.jobRole?.hourlyRate || 0;
     const totalPay = totalHours * hourlyRate;
+    const shift =user.shift?.name;
 
     res.json({
       employee: {
         name: user.name,
         role: user.jobRole?.name || 'Not Assigned',
         hourlyRate,
+        shift,
       },
       month,
       year,
@@ -80,6 +82,6 @@ export const getPayslipData = async (req, res) => {
 };
 
 
-// @desc Get list of months from user join date till now
+
 
 

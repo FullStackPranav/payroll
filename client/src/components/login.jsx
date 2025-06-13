@@ -29,14 +29,16 @@ const Login = () => { // Component name remains Login
       // Make the POST request to your login API
       const res = await axios.post('http://localhost:5000/api/auth/login', formData);
       // Destructure response data
-      const { token, role, name, photo } = res.data;
+      const { token, role, name, photo,shift } = res.data;
 
       // Store user details in localStorage for persistence
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
       localStorage.setItem('name', name);
       localStorage.setItem('email', formData.email);
-     localStorage.setItem('photo', photo || 'uploads/default.png');
+      localStorage.setItem('photo', photo || 'uploads/default.png');
+     localStorage.setItem('shift', JSON.stringify(shift));
+
 
 
       // Redirect user based on their role
@@ -52,6 +54,7 @@ const Login = () => { // Component name remains Login
       setLoading(false); // Always stop loading state, regardless of success or failure
     }
   };
+  
 
   return (
     // Main container for the login form, centering it on the screen

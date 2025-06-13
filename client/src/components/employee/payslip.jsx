@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../navbar';
-import dayjs from 'dayjs';
+import EmployeeSidebar from './EmployeeSidebar';
+import '../css/EmployeePayslipDetail.css';
 
 const EmployeePayslipDetail = () => {
   const location = useLocation();
@@ -52,114 +53,73 @@ const EmployeePayslipDetail = () => {
     fetchData();
   }, [year, month, token]);
 
-  if (loading) return <p style={{ padding: '2rem' }}>Loading payslip...</p>;
-  if (error) return <p style={{ padding: '2rem', color: 'red' }}>{error}</p>;
-  if (!payslip || !payslip.employee) return <p style={{ padding: '2rem' }}>No payslip data available.</p>;
+  if (loading) return <p className="employee-payslip-loading">Loading payslip...</p>;
+  if (error) return <p className="employee-payslip-error">{error}</p>;
+  if (!payslip || !payslip.employee) return <p className="employee-payslip-error">No payslip data available.</p>;
 
   let serialNo = 1;
 
   return (
-    <div style={{ padding: '2rem', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+    <>
       <Navbar />
+      <div className="employee-payslip-layout">
+        <EmployeeSidebar />
+        <div className="employee-payslip-container">
+          <h2>Payslip for {new Date(year, month - 1).toLocaleString('default', { month: 'long' })} {year}</h2>
 
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          marginBottom: '1.5rem',
-          padding: '0.6rem 1.2rem',
-          backgroundColor: '#007bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer'
-        }}
-      >
-        ← Back
-      </button>
+          <div className="payslip-summary">
+            <p><strong>Name:</strong> {payslip.employee.name}</p>
+            <p><strong>Role:</strong> {payslip.employee.role}</p>
+            <p><strong>Hourly Rate:</strong> ₹{payslip.employee.hourlyRate}</p>
+            <p><strong>Total Hours Worked:</strong> {payslip.totalHours.toFixed(2)} hrs</p>
+            <p><strong>Total Pay:</strong> ₹{payslip.totalPay.toFixed(2)}</p>
+          </div>
 
-      <h2 style={{ marginBottom: '1rem' }}>
-        Payslip for {new Date(year, month - 1).toLocaleString('default', { month: 'long' })} {year}
-      </h2>
+          <h3>Attendance Logs</h3>
+          <h2>Shift :{payslip.employee.shift}</h2>
 
-      {/* Payslip Summary Card */}
-      <div style={{
-        backgroundColor: 'white',
-        padding: '1.5rem',
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
-        marginBottom: '2rem',
-        maxWidth: '600px'
-      }}>
-        <p><strong>Name:</strong> {payslip.employee.name}</p>
-        <p><strong>Role:</strong> {payslip.employee.role}</p>
-        <p><strong>Hourly Rate:</strong> ₹{payslip.employee.hourlyRate}</p>
-        <p><strong>Total Hours Worked:</strong> {payslip.totalHours.toFixed(2)} hrs</p>
-        <p><strong>Total Pay:</strong> ₹{payslip.totalPay.toFixed(2)}</p>
-      </div>
-
-      {/* Attendance Logs */}
-      <h3 style={{ marginBottom: '1rem' }}>Attendance Logs</h3>
-
-      {logs.length === 0 ? (
-        <p>No attendance records found for this month.</p>
-      ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table
-            style={{
-              borderCollapse: 'collapse',
-              width: '100%',
-              backgroundColor: 'white',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
-            }}
-          >
-            <thead style={{ background: '#343a40', color: 'white' }}>
-              <tr>
-                <th style={thStyle}>Sr. No.</th>
-                <th style={thStyle}>Date</th>
-                <th style={thStyle}>Punch In</th>
-                <th style={thStyle}>Login Status</th>
-                <th style={thStyle}>Punch Out</th>
-                <th style={thStyle}>Logout Status</th>
-                <th style={thStyle}>Total Hours</th>
-              </tr>
-            </thead>
-            <tbody>
-              {logs.map((log, i) =>
-                log.punchCycles.map((cycle, j) => {
-                  const showDate = j === 0;
-                  const showTotalHours = showDate;
-                  return (
-                    <tr key={`${i}-${j}`} style={{ backgroundColor: j % 2 === 0 ? '#f9f9f9' : 'white' }}>
-                      <td style={tdStyle}>{serialNo++}</td>
-                      <td style={tdStyle}>{showDate ? new Date(log.date).toLocaleDateString() : ''}</td>
-                      <td style={tdStyle}>{cycle.punchIn ? new Date(cycle.punchIn).toLocaleTimeString() : '—'}</td>
-                      <td style={tdStyle}>{cycle.loginStatus || '—'}</td>
-                      <td style={tdStyle}>{cycle.punchOut ? new Date(cycle.punchOut).toLocaleTimeString() : '—'}</td>
-                      <td style={tdStyle}>{cycle.logoutStatus || '—'}</td>
-                      <td style={tdStyle}>{showTotalHours ? log.totalHours : ''}</td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+          {logs.length === 0 ? (
+            <p>No attendance records found for this month.</p>
+          ) : (
+            <div className="attendance-table-wrapper">
+              <table className="attendance-table">
+                <thead>
+                  <tr>
+                    <th>Sr. No.</th>
+                    <th>Date</th>
+                    <th>Punch In</th>
+                    <th>Login Status</th>
+                    <th>Punch Out</th>
+                    <th>Logout Status</th>
+                    <th>Total Hours</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {logs.map((log, i) =>
+                    log.punchCycles.map((cycle, j) => {
+                      const showDate = j === 0;
+                      const showTotalHours = showDate;
+                      return (
+                        <tr key={`${i}-${j}`}>
+                          <td>{serialNo++}</td>
+                          <td>{showDate ? new Date(log.date).toLocaleDateString() : ''}</td>
+                          <td>{cycle.punchIn ? new Date(cycle.punchIn).toLocaleTimeString() : '—'}</td>
+                          <td>{cycle.loginStatus || '—'}</td>
+                          <td>{cycle.punchOut ? new Date(cycle.punchOut).toLocaleTimeString() : '—'}</td>
+                          <td>{cycle.logoutStatus || '—'}</td>
+                          <td>{showTotalHours ? log.totalHours : ''}</td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
-};
-
-const thStyle = {
-  padding: '0.75rem',
-  textAlign: 'left',
-  fontWeight: 'bold'
-};
-
-const tdStyle = {
-  padding: '0.75rem',
-  borderBottom: '1px solid #e0e0e0'
 };
 
 export default EmployeePayslipDetail;

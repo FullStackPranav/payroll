@@ -16,6 +16,7 @@ const EmployeeDashboard = () => {
   const name = localStorage.getItem('name');
   const email = localStorage.getItem('email');
   const photo = localStorage.getItem('photo');
+  const shift = JSON.parse(localStorage.getItem('shift'));
   const navigate = useNavigate();
 
   const punchIn = async () => {
@@ -41,6 +42,16 @@ const EmployeeDashboard = () => {
   };
 
   useEffect(() => {
+    const now = new Date();
+    const firstJan = new Date(now.getFullYear(), 0, 1);
+    const numberOfDays = Math.floor((now - firstJan) / (24 * 60 * 60 * 1000));
+    const currentWeek = Math.ceil((numberOfDays + firstJan.getDay() + 1) / 7);
+
+    if (!week) setWeek(currentWeek.toString());
+    if (!year) setYear(now.getFullYear().toString());
+  }, []);
+
+  useEffect(() => {
     const fetchLogs = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/attendance/logs', {
@@ -52,18 +63,28 @@ const EmployeeDashboard = () => {
         console.error("Error fetching logs", err);
       }
     };
-    fetchLogs();
+    if (week && year) {
+      fetchLogs();
+    }
   }, [week, year]);
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(''), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   return (
     <>
-      <EmployeeSidebar />
       <Navbar />
+      <EmployeeSidebar />
+
       <div className="dashboard-container">
         <div className="dashboard-card">
           <div className="dashboard-hero">
             <img
-              src={`http://localhost:5000/${photo || 'uploads/default.png'}`}
+              src={`http://localhost:5000/${photo && photo !== 'undefined' ? photo : 'uploads/default.png'}`}
               alt={name}
               style={{
                 width: '70px',
@@ -76,6 +97,13 @@ const EmployeeDashboard = () => {
             <div className="hero-title">Welcome, <span className="hero-name">{name}</span></div>
             <div className="hero-subtitle">Here’s your attendance overview</div>
             <div className="hero-email">{email}</div>
+            {shift ? (
+              <div className='hero-shift'>
+                Shift: {shift.name} ({shift.startTime} - {shift.endTime})
+              </div>
+            ) : (
+              <div className='hero-shift'>Shift: Not Assigned</div>
+            )}
           </div>
 
           <div className="action-buttons-section">
@@ -123,7 +151,7 @@ const EmployeeDashboard = () => {
                 {logs.length > 0 ? (
                   logs.map((log, index) => (
                     <tr key={index}>
-                      <td>{log.date}</td>
+                      <td>{new Date(log.date).toLocaleDateString()}</td>
                       <td>
                         {log.hoursWorked > 0 ? `${log.hoursWorked} hr${log.hoursWorked > 1 ? 's' : ''}` : ''}
                         {log.minutesWorked > 0 ? ` ${log.minutesWorked} min${log.minutesWorked > 1 ? 's' : ''}` : (log.hoursWorked === 0 ? '0 mins' : '')}

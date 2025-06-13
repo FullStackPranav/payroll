@@ -1,0 +1,53 @@
+.employee-payslip-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.employee-payslip-container {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 200px; /* Adjust based on your sidebar width */
+  box-sizing: border-box;
+}
+
+.employee-payslip-loading,
+.employee-payslip-error {
+  padding: 2rem;
+  color: red;
+}
+
+.payslip-summary {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.attendance-table-wrapper {
+  overflow-x: auto;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.attendance-table th {
+  background-color: #343a40;
+  color: #fff;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: bold;
+}
+
+.attendance-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+}
