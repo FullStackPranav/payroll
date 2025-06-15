@@ -11,6 +11,7 @@ import {
 
 import {
   createEmployeeRole,
+  deleteRole,
   getAllEmployeeRoles,
   
   getPayslipData,
@@ -21,7 +22,6 @@ import { updateWrokedHours } from '../controller/attendanceController.js';
 
 const router = express.Router();
 
-// USER routes 
 router.get('/users/all', verifyToken, getAllUsers);
 router.get('/users/:id', verifyToken, getUserById);
 router.put('/users/:id/status', verifyToken, updateUserStatus);
@@ -32,16 +32,16 @@ router.get('/admin/totalusers',verifyToken,getEmployeeStats);
 
 
 
-router.get('/users/:id/payslip', verifyToken, getPayslipData); // Admin: fetch by user ID param
-router.get('/employee/payslip/me', verifyToken, getPayslipData);         // Employee: fetch by token user ID
+router.get('/users/:id/payslip', verifyToken, getPayslipData); 
+router.get('/employee/payslip/me', verifyToken, getPayslipData);
 router.patch('/attendance/:id/adjust-hours',verifyToken,isAdmin,updateWrokedHours)
 
 
 
-// roles
+
 router.post('/employee-roles', verifyToken, createEmployeeRole);
 router.get('/employee-roles', verifyToken, getAllEmployeeRoles);
 router.put('/users/:id/assign-job-role',verifyToken,assignJobRole);
-
+router.delete('/employee-roles/:id',verifyToken,deleteRole)
 
 export default router;

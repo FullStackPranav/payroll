@@ -27,7 +27,6 @@ export const getAllShifts=async(req,res)=>{
     }
 }
 
-// controller/adminController.js or wherever user controllers are
 
 
 export const assignShiftToUser = async (req, res) => {
@@ -43,6 +42,21 @@ export const assignShiftToUser = async (req, res) => {
     res.json({ message: "Shift assigned to user", user });
   } catch (err) {
     console.error("Error assigning shift:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const deleteShift = async (req, res) => {
+  const { shiftId } = req.params;
+  try {
+    const shift = await Shift.findByIdAndDelete(shiftId);
+    if (!shift) return res.status(404).json({ message: "Shift not found" });
+
+    await User.updateMany({ shift: shiftId }, { $unset: { shift: "" } });
+
+    res.json({ message: "Shift deleted successfully", deletedShift: shift });
+  } catch (error) {
+    console.error("Error deleting shift:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

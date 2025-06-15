@@ -56,13 +56,27 @@ const AdminRolesPage = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this role?')) return;
+
+    try {
+      await axios.delete(`${BASE_URL}/api/employee-roles/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSuccess('✅ Role deleted successfully');
+      fetchRoles();
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.error || '❌ Error deleting role');
+    }
+  };
+
   return (
     <>
       <Navbar />
       <AdminSidebar />
       <div className="admin-roles-container">
         <div className="admin-roles-wrapper">
-
           <div className="form-card">
             <h2 className="form-title">➕ Add New Role</h2>
             <form onSubmit={handleSubmit} className="form-grid">
@@ -105,6 +119,7 @@ const AdminRolesPage = () => {
                     <tr>
                       <th>Role Name</th>
                       <th>Hourly Rate (₹)</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -112,6 +127,14 @@ const AdminRolesPage = () => {
                       <tr key={role._id}>
                         <td>{role.name}</td>
                         <td>₹{role.hourlyRate}</td>
+                        <td>
+                          <button
+                            className="delete-button"
+                            onClick={() => handleDelete(role._id)}
+                          >
+                            🗑 Delete
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

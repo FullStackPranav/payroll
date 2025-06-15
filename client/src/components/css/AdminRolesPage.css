@@ -131,3 +131,15 @@
   color: #6b7280;
   font-style: italic;
 }
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}

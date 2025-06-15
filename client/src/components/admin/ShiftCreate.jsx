@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AdminSidebar from './AdminSidebar';
 import Navbar from '../navbar';
-import '../css/ShiftCreate.css'; // ✅ Import the stylesheet
+import '../css/ShiftCreate.css'; 
 
 const ShiftCreate = () => {
   const [name, setName] = useState('');
@@ -48,6 +48,20 @@ const ShiftCreate = () => {
       console.error('Error fetching shifts', err);
     }
   };
+const handleDeleteShift = async (shiftId) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this shift?");
+  if (!confirmDelete) return;
+
+  try {
+    await axios.delete(`http://localhost:5000/api/shifts/deleteshift/${shiftId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    fetchShifts(); 
+  } catch (err) {
+    console.error("Error deleting shift:", err);
+  }
+};
+
 
   useEffect(() => {
     fetchShifts();
@@ -124,6 +138,14 @@ const ShiftCreate = () => {
                     <td>{shift.name}</td>
                     <td>{shift.days.join(', ')}</td>
                     <td>{shift.startTime} - {shift.endTime}</td>
+                    <td>
+        <button
+          className="delete-button"
+          onClick={() => handleDeleteShift(shift._id)}
+        >
+          ❌
+        </button>
+      </td>
                   </tr>
                 ))}
               </tbody>

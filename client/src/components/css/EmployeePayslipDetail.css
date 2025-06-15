@@ -21,33 +21,82 @@
   background-color: #fff;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
   max-width: 600px;
 }
 
-.attendance-table-wrapper {
-  overflow-x: auto;
-}
-
-.attendance-table {
+.attendance-log-table {
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
 }
 
-.attendance-table th {
+.attendance-log-table th {
   background-color: #343a40;
-  color: #fff;
+  color: #ffffff;
   padding: 0.75rem;
-  text-align: left;
+  text-align: center;
   font-weight: bold;
 }
 
-.attendance-table td {
+.attendance-log-table td {
   padding: 0.75rem;
   border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+/* Toggle Row (date row that expands) */
+.date-toggle-row {
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.date-toggle-row:hover {
+  background-color: #e2e6ea;
+}
+
+/* Arrow indicator style */
+.arrow {
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.3s ease;
+  color: #333;
+}
+
+.arrow.expanded {
+  transform: rotate(90deg);
+}
+
+/* Expanded rows (punch cycles) */
+.cycle-row {
+  background-color: #ffffff;
+  border-top: 1px solid #eee;
+}
+
+.cycle-row td {
+  padding-left: 20px;
+  color: #495057;
+  font-size: 0.95rem;
+  background-color: #fcfcfc;
+  border-bottom: 1px dashed #ccc;
+}
+
+/* For arrow and label alignment in date rows */
+.expandable-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hide download button on print */
+@media print {
+  .download-btn-wrapper {
+    display: none;
+  }
 }

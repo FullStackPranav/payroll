@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import logout from './logout';
 import './css/Navbar.css';
@@ -33,6 +33,7 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
+     
       <div className="navbar-top">
         <div className="navbar-brand">
           <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
@@ -50,6 +51,7 @@ const Navbar = () => {
         {user?.role === 'admin' && (
           <Link to="/admin-dashboard" onClick={() => setMenuOpen(false)}>
             <LayoutDashboard size={18} />
+
             <span>Admin Dashboard</span>
           </Link>
         )}
@@ -57,6 +59,7 @@ const Navbar = () => {
         {user?.role === 'employee' && (
           <Link to="/employee-dashboard" onClick={() => setMenuOpen(false)}>
             <LayoutDashboard size={18} />
+
             <span>Employee Dashboard</span>
           </Link>
         )}
@@ -68,6 +71,7 @@ const Navbar = () => {
               <LogOut size={18} />
               <span>Logout</span>
             </button>
+            
           </>
         ) : (
           <>
@@ -79,6 +83,7 @@ const Navbar = () => {
               <LogIn size={18} />
               <span>Login</span>
             </Link>
+            
           </>
         )}
       </div>

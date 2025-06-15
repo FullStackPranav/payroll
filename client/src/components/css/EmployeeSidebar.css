@@ -34,6 +34,11 @@
   margin: 1rem 0;
 }
 
+.employee-sidebar ul li button{
+  margin: 1rem 0;
+}
+
+
 .employee-sidebar ul li a {
   color: white;
   text-decoration: none;
@@ -41,6 +46,13 @@
 
 .employee-sidebar ul li a:hover {
   text-decoration: underline;
+}
+
+.back-button{
+  width: 200px;
+  height: 40px;
+  color: #343a40;
+  background-color: #343a40;
 }
 
 /* Responsive behavior */
@@ -54,3 +66,4 @@
     padding: 0.3rem 0.5rem;
   }
 }
+

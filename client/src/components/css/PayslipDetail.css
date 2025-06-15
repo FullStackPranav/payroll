@@ -70,3 +70,24 @@
 .back-button:hover {
   background-color: #5a6268;
 }
+.no-print {
+  @media print {
+    display: none !important;
+  }
+}
+
+.pdf-content-wrapper {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.download-btn-wrapper {
+  margin-bottom: 20px;
+}
+
+.pending-warning {
+  color: red;
+  font-weight: bold;
+}

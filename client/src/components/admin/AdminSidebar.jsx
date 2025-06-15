@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../css/AdminSidebar.css';
 
 const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate=useNavigate()
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -38,6 +39,9 @@ const AdminSidebar = () => {
       <div className={`admin-sidebar ${isOpen ? 'open' : 'closed'}`}>
         <h3>Admin Menu</h3>
         <ul>
+          <li>
+            <button className='back-button' onClick={()=>navigate(-1)}>Back</button>
+          </li>
           <li>
             <Link to="/adminviewusers" onClick={() => setIsOpen(false)}>View Employees</Link>
           </li>

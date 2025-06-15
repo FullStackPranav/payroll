@@ -54,18 +54,23 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/attendance/logs', {
+        const config = {
           headers: { Authorization: `Bearer ${token}` },
-          params: { week, year }
-        });
+        };
+
+        if (week && year) {
+          config.params = { week, year };
+        }
+
+        const res = await axios.get('http://localhost:5000/api/attendance/logs', config);
         setLogs(res.data);
       } catch (err) {
         console.error("Error fetching logs", err);
       }
     };
-    if (week && year) {
-      fetchLogs();
-    }
+
+    // Always fetch if week and year are defined (or if week is "")
+    fetchLogs();
   }, [week, year]);
 
   useEffect(() => {

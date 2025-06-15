@@ -6,7 +6,7 @@ import moment from 'moment';
 
 
 
-// @desc    Create a new role
+
 export const createEmployeeRole = async (req, res) => {
   const { name, hourlyRate } = req.body;
 
@@ -25,6 +25,20 @@ export const createEmployeeRole = async (req, res) => {
   }
 };
 
+export const deleteRole=async(req,res)=>{
+  const{id}=req.params;
+  try{
+    const deleted=await employeeRoleModel.findByIdAndDelete(id);
+    if(!deleted){
+      return res.status(404).json({message:'role not found'})
+    }
+    res.status(200).json({message:'role deleted succesfully'})
+
+  }catch(err){
+    console.error('error delteding role',err);
+    res.status(500).json({error:'server erroer'})
+  }
+}
 
 export const getAllEmployeeRoles = async (req, res) => {
   try {
@@ -37,12 +51,11 @@ export const getAllEmployeeRoles = async (req, res) => {
 
 
 export const getPayslipData = async (req, res) => {
-  // Use ID from params if present (admin view), else use ID from token (employee view)
   const userId = req.params.id || req.user.id;
   const { year, month } = req.query;
 
   if (!year || !month) {
-    return res.status(400).json({ message: "Year and month query parameters are required" });
+    return res.status(400).json({ message: "Year and month are required" });
   }
 
   try {
@@ -57,10 +70,21 @@ export const getPayslipData = async (req, res) => {
       date: { $gte: startOfMonth, $lte: endOfMonth }
     });
 
-    const totalHours = logs.reduce((sum, log) => sum + (log.workedHours || 0), 0);
+    const totalHours = logs.reduce((sum, log) => {
+      const cycleHours = log.punchCycles?.reduce((cycleSum, cycle) => {
+        if (cycle.punchIn && cycle.punchOut) {
+          const inTime = new Date(cycle.punchIn);
+          const outTime = new Date(cycle.punchOut);
+          return cycleSum + (outTime - inTime) / (1000 * 60 * 60); // ms to hrs
+        }
+        return cycleSum;
+      }, 0);
+      return sum + cycleHours;
+    }, 0);
+
     const hourlyRate = user.jobRole?.hourlyRate || 0;
     const totalPay = totalHours * hourlyRate;
-    const shift =user.shift?.name;
+    const shift = user.shift?.name;
 
     res.json({
       employee: {
@@ -80,6 +104,7 @@ export const getPayslipData = async (req, res) => {
     res.status(500).json({ message: 'Server error while generating payslip' });
   }
 };
+
 
 
 

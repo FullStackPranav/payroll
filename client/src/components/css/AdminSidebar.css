@@ -44,6 +44,13 @@
   text-decoration: underline;
 }
 
+.back-button{
+  width: 200px;
+  height: 40px;
+  color: #343a40;
+  background-color: #343a40;
+}
+
 /* Responsive behavior */
 @media (max-width: 768px) {
   .admin-sidebar {
