@@ -41,6 +41,9 @@ const EmployeeSidebar = () => {
           <li>
             <Link to="/employee/payslips" onClick={() => setIsOpen(false)}>View Payslips</Link>
           </li>
+          <li>
+            <Link to='/employee/leaves/me' onClick={()=>setIsOpen(false)}>Leaves</Link>
+          </li>
         </ul>
       </div>
     </>

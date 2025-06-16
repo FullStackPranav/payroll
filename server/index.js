@@ -8,6 +8,7 @@ import authRoutes from './routes/authRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
 import adminRoutes from './routes/adminroutes.js';
 import shiftRoutes from './routes/shiftRoutes.js';
+import leaveRoutes from './routes/Leaveroutes.js';
 
 dotenv.config();
 connectDB();
@@ -25,8 +26,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api', adminRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/shifts', shiftRoutes);
-
-// ✅ Serve frontend (React) in production
+app.use('/api/leaves',leaveRoutes);
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
 

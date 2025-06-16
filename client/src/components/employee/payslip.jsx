@@ -15,6 +15,7 @@ const EmployeePayslipDetail = () => {
 
   const [payslip, setPayslip] = useState(null);
   const [logs, setLogs] = useState([]);
+  const [leaveDays, setLeaveDays] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
@@ -62,18 +63,27 @@ const EmployeePayslipDetail = () => {
       }
 
       try {
-        const payslipRes = await axios.get('http://localhost:5000/api/employee/payslip/me', {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { year, month }
-        });
+        const [payslipRes, logsRes, leavesRes] = await Promise.all([
+          axios.get('http://localhost:5000/api/employee/payslip/me', {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { year, month }
+          }),
+          axios.get('http://localhost:5000/api/attendance/me/monthly-logs', {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { year, month }
+          }),
+          axios.get('http://localhost:5000/api/leaves/me/approved', {
+            headers: { Authorization: `Bearer ${token}` },
+            params: { year, month }
+          })
+        ]);
+
         setPayslip(payslipRes.data);
 
-        const logsRes = await axios.get('http://localhost:5000/api/attendance/me/monthly-logs', {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { year, month }
-        });
         const sortedLogs = logsRes.data.sort((a, b) => new Date(a.date) - new Date(b.date));
         setLogs(sortedLogs);
+
+        setLeaveDays(leavesRes.data.totalLeaveDays || 0);
 
         const stats = {
           onTimeLogins: 0,
@@ -178,6 +188,7 @@ const EmployeePayslipDetail = () => {
               <p><strong>Hourly Rate:</strong> ₹{payslip.employee.hourlyRate}</p>
               <p><strong>Total Hours Worked:</strong> {payslip.totalHours.toFixed(2)} hrs</p>
               <p><strong>Total Days Worked:</strong> {complianceStats.totalDaysWorked}</p>
+              <p><strong>Leave Days (Approved):</strong> {leaveDays}</p>
               <p><strong>Total Pay:</strong> ₹{payslip.totalPay.toFixed(2)}</p>
             </div>
 

@@ -1,0 +1,149 @@
+.admin-dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.filter-section {
+  margin-bottom: 1rem;
+}
+
+.filter-section select {
+  margin-left: 0.5rem;
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Table */
+.leave-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+
+.leave-table th,
+.leave-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.leave-table thead {
+  background-color: #e8edf3;
+  font-weight: 600;
+}
+
+/* Buttons */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.approve-btn {
+  background-color: #22c55e;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reject-btn {
+  background-color: #ef4444;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.approve-btn:hover {
+  background-color: #16a34a;
+}
+
+.reject-btn:hover {
+  background-color: #dc2626;
+}
+
+.no-action {
+  color: #aaa;
+}
+
+/* Status color coding */
+.status.approved {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.status.rejected {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.status.pending {
+  color: #f59e0b;
+  font-weight: bold;
+}
+.filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.csv-download-btn {
+  background-color: #059669;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.csv-download-btn:hover {
+  background-color: #047857;
+}
+
+.leave-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leave-table th, .leave-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.status.approved {
+  color: green;
+  font-weight: bold;
+}
+
+.status.rejected {
+  color: red;
+  font-weight: bold;
+}
+
+.status.pending {
+  color: orange;
+  font-weight: bold;
+}

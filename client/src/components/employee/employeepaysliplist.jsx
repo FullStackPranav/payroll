@@ -7,7 +7,7 @@ import '../css/Employeelistpayslip.css';
 const Employeelistpayslip = () => {
   const { id } = useParams();
   const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth(); // 0-indexed
+  const currentMonth = new Date().getMonth(); 
   const startYear = 2025;
 
   const allMonths = [];

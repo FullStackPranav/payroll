@@ -51,6 +51,9 @@ const AdminSidebar = () => {
           <li>
             <Link to="/adminviewshifts" onClick={() => setIsOpen(false)}>View Shifts</Link>
           </li>
+          <li>
+            <Link to="/adminviewleaves" onClick={() => setIsOpen(false)}>View Employee leaves</Link>
+          </li>
         </ul>
       </div>
     </>

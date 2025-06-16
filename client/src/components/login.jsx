@@ -11,7 +11,7 @@ const Login = () => { // Component name remains Login
     password: ''
   });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // State to manage loading for the login button
+  const [loading, setLoading] = useState(false); 
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -21,14 +21,14 @@ const Login = () => { // Component name remains Login
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    setError(''); // Clear any previous errors
-    setLoading(true); // Start loading state
+    e.preventDefault(); 
+    setError(''); 
+    setLoading(true); 
 
     try {
-      // Make the POST request to your login API
+     
       const res = await axios.post('http://localhost:5000/api/auth/login', formData);
-      // Destructure response data
+    
       const { token, role, name, photo,shift } = res.data;
 
       // Store user details in localStorage for persistence
@@ -37,53 +37,49 @@ const Login = () => { // Component name remains Login
       localStorage.setItem('name', name);
       localStorage.setItem('email', formData.email);
       localStorage.setItem('photo', photo || 'uploads/default.png');
-     localStorage.setItem('shift', JSON.stringify(shift));
+      localStorage.setItem('shift', JSON.stringify(shift));
 
 
 
-      // Redirect user based on their role
+      
       if (role === 'admin') {
-        navigate('/admin-dashboard'); // Navigate to admin dashboard
+        navigate('/admin-dashboard'); 
       } else {
-        navigate('/employee-dashboard'); // Navigate to employee dashboard
+        navigate('/employee-dashboard'); 
       }
     } catch (err) {
-      // Handle login errors and display a user-friendly message
+     
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
-      setLoading(false); // Always stop loading state, regardless of success or failure
+      setLoading(false); 
     }
   };
   
 
   return (
-    // Main container for the login form, centering it on the screen
-    // Uses Tailwind classes for min-height, flex layout to center content, background, font, and anti-aliasing
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center font-inter antialiased py-12 px-4 sm:px-6 lg:px-8">
-      {/* Login Form Container */}
-      <div className="login-card"> {/* Custom class from Login.css for styling */}
+      <div className="login-card"> 
         <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
           Secure Client Login
         </h3>
 
         {/* Error Message Display */}
         {error && (
-          <div className="error-message-box"> {/* Custom class for error messages */}
+          <div className="error-message-box"> 
             {error}
           </div>
         )}
 
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
-          {/* Email Input Group - uses custom CSS class `input-group` for centering */}
           <div className="input-group">
-            <label htmlFor="email" className="input-label"> {/* Uses custom CSS class `input-label` */}
+            <label htmlFor="email" className="input-label"> 
               <Mail size={16} /> Email
             </label>
             <input
               type="email"
               id="email"
-              className="login-input" // Uses custom CSS class `login-input`
+              className="login-input" 
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -92,15 +88,15 @@ const Login = () => { // Component name remains Login
             />
           </div>
 
-          {/* Password Input Group - uses custom CSS class `input-group` for centering */}
+        
           <div className="input-group">
-            <label htmlFor="password" className="input-label"> {/* Uses custom CSS class `input-label` */}
+            <label htmlFor="password" className="input-label">
               <Lock size={16} /> Password
             </label>
             <input
               type="password"
               id="password"
-              className="login-input" // Uses custom CSS class `login-input`
+              className="login-input" 
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -109,13 +105,13 @@ const Login = () => { // Component name remains Login
             />
           </div>
 
-          {/* Login Button - uses custom CSS class `login-button` */}
+   
           <button
             type="submit"
-            disabled={loading} // Button disabled when loading
+            disabled={loading} 
             className="login-button"
           >
-            {/* Loading spinner SVG (only visible when loading) */}
+          
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -125,7 +121,7 @@ const Login = () => { // Component name remains Login
             {loading ? 'Logging In...' : 'Login to Your Account'}
           </button>
 
-          {/* Register Link */}
+        
           <div className="text-center mt-6">
             <a
               href='/register'
@@ -140,4 +136,4 @@ const Login = () => { // Component name remains Login
   );
 };
 
-export default Login; // Exporting as Login
+export default Login; 

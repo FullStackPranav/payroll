@@ -17,6 +17,8 @@ import AdminUserPayslipPage from './components/admin/AdminUserPayslipPage';
 import Employeelistpayslip from './components/employee/employeepaysliplist';
 import EmployeePayslipDetail from './components/employee/payslip';
 import ShiftCreate from './components/admin/ShiftCreate';
+import EmployeeLeavePage from './components/employee/employeeLeave';
+import AdminLeavePage from './components/admin/Adminleave';
 
 
 createRoot(document.getElementById('root')).render(
@@ -40,6 +42,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/admin/users/:id/payslips" element={<AdminUserPayslipPage />} />
         <Route path="/admin/users/:id/payslip/:year/:month" element={<PayslipDetail />} />
          <Route path="/adminviewshifts" element={<ShiftCreate />} />
+          <Route path="/adminviewleaves" element={<AdminLeavePage />} />
 
 
        {/* employee */}
@@ -47,6 +50,9 @@ createRoot(document.getElementById('root')).render(
         <Route path="/employee-dashboard"element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}/>
         <Route path="/employee/payslips"element={<ProtectedRoute><Employeelistpayslip /></ProtectedRoute>}/>
         <Route path="/employee/payslip/me"element={<ProtectedRoute><EmployeePayslipDetail /></ProtectedRoute>}/>
+        <Route path="/employee/leaves/me"element={<ProtectedRoute><EmployeeLeavePage /></ProtectedRoute>}/>
+
+
       </Routes>
     </BrowserRouter>
   </StrictMode>
