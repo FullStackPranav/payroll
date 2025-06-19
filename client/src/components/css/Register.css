@@ -194,3 +194,6 @@
         max-width: 100%; /* Full width on smaller screens */
     }
 }
+.register-input {
+  padding-right: 2.5rem; /* gives room for the eye icon */
+}

@@ -19,6 +19,7 @@ import EmployeePayslipDetail from './components/employee/payslip';
 import ShiftCreate from './components/admin/ShiftCreate';
 import EmployeeLeavePage from './components/employee/employeeLeave';
 import AdminLeavePage from './components/admin/Adminleave';
+import Home from './components/homepage';
 
 
 createRoot(document.getElementById('root')).render(
@@ -29,12 +30,12 @@ createRoot(document.getElementById('root')).render(
        
       {/* default */}
 
-        <Route path="/" element={<Register />} />
+        <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
          {/* admin */}
-
+        <Route path="/home" element={<Home />} />    
         <Route path="/adminviewusers" element={<AdminUserList />} />
         <Route path="/admin-dashboard"element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}/>
         <Route path="/adminviewroles"element={<ProtectedRoute><AdminRolesPage /></ProtectedRoute>}/>

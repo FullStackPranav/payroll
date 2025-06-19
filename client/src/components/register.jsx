@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Camera } from 'lucide-react'; // Import necessary icons
-import './css/Register.css'; // Import the custom CSS file for specific styling
+import { User, Mail, Lock, Camera, Eye, EyeOff } from 'lucide-react'; // Include Eye and EyeOff icons
+import './css/Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -14,8 +14,9 @@ const Register = () => {
   });
 
   const [photo, setPhoto] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // Password visibility toggle
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -31,7 +32,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true); // Start loading state
+    setLoading(true);
 
     const data = new FormData();
     data.append('name', formData.name);
@@ -53,34 +54,29 @@ const Register = () => {
       );
 
       if (response.status === 201) {
-        navigate('/login'); // Redirect to login after successful registration
+        navigate('/login');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
-      setLoading(false); // Stop loading state
+      setLoading(false);
     }
   };
 
   return (
-    // Main container for the registration form, centering it on the screen
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center font-inter antialiased py-12 px-4 sm:px-6 lg:px-8">
-      {/* Registration Form Container */}
       <div className="register-card">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
           Create Your Account
         </h2>
 
-        {/* Error Message Display */}
         {error && (
           <div className="error-message-box">
             {error}
           </div>
         )}
 
-        {/* Registration Form */}
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-          {/* Name Input Group */}
           <div className="input-group">
             <label htmlFor="name" className="input-label">
               <User size={16} /> Full Name
@@ -88,7 +84,7 @@ const Register = () => {
             <input
               type="text"
               id="name"
-              className="register-input" // Corrected: Removed JSX comment inside attribute
+              className="register-input"
               name="name"
               value={formData.name}
               onChange={handleChange}
@@ -97,7 +93,6 @@ const Register = () => {
             />
           </div>
 
-          {/* Email Input Group */}
           <div className="input-group">
             <label htmlFor="email" className="input-label">
               <Mail size={16} /> Email Address
@@ -105,7 +100,7 @@ const Register = () => {
             <input
               type="email"
               id="email"
-              className="register-input" // Corrected: Removed JSX comment inside attribute
+              className="register-input"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -114,24 +109,30 @@ const Register = () => {
             />
           </div>
 
-          {/* Password Input Group */}
-          <div className="input-group">
+          <div className="input-group relative">
             <label htmlFor="password" className="input-label">
               <Lock size={16} /> Password
             </label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               id="password"
-              className="register-input" // Corrected: Removed JSX comment inside attribute
+              className="register-input pr-10"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
               placeholder="••••••••"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(prev => !prev)}
+              className="absolute top-9 right-3 text-gray-600 hover:text-gray-800 focus:outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
-          {/* Profile Photo Input Group */}
           <div className="input-group">
             <label htmlFor="photo" className="input-label">
               <Camera size={16} /> Profile Photo (optional)
@@ -139,17 +140,16 @@ const Register = () => {
             <input
               type="file"
               id="photo"
-              className="register-input file-input" // Corrected: Removed JSX comment inside attribute
+              className="register-input file-input"
               accept="image/*"
               onChange={handlePhotoChange}
             />
           </div>
 
-          {/* Register Button */}
           <button
             type="submit"
             disabled={loading}
-            className="register-button" // Corrected: Removed JSX comment inside attribute
+            className="register-button"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -160,7 +160,6 @@ const Register = () => {
             {loading ? 'Registering...' : 'Register Account'}
           </button>
 
-          {/* Login Link */}
           <div className="text-center mt-6">
             <p className="text-gray-700 text-sm font-medium">
               Already have an account?{' '}

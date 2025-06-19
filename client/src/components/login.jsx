@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, DollarSign } from 'lucide-react'; // Only import icons used in the login form
-import './css/Login.css'; // Import the custom CSS file for specific styling
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'; // Added Eye and EyeOff icons
+import './css/Login.css';
 
-const Login = () => { // Component name remains Login
+const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Toggle visibility
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -21,17 +22,14 @@ const Login = () => { // Component name remains Login
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
-    setError(''); 
-    setLoading(true); 
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
     try {
-     
       const res = await axios.post('http://localhost:5000/api/auth/login', formData);
-    
-      const { token, role, name, photo,shift } = res.data;
+      const { token, role, name, photo, shift } = res.data;
 
-      // Store user details in localStorage for persistence
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
       localStorage.setItem('name', name);
@@ -39,47 +37,36 @@ const Login = () => { // Component name remains Login
       localStorage.setItem('photo', photo || 'uploads/default.png');
       localStorage.setItem('shift', JSON.stringify(shift));
 
-
-
-      
-      if (role === 'admin') {
-        navigate('/admin-dashboard'); 
-      } else {
-        navigate('/employee-dashboard'); 
-      }
+      navigate(role === 'admin' ? '/admin-dashboard' : '/employee-dashboard');
     } catch (err) {
-     
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center font-inter antialiased py-12 px-4 sm:px-6 lg:px-8">
-      <div className="login-card"> 
+      <div className="login-card">
         <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
           Secure Client Login
         </h3>
 
-        {/* Error Message Display */}
         {error && (
-          <div className="error-message-box"> 
+          <div className="error-message-box">
             {error}
           </div>
         )}
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label htmlFor="email" className="input-label"> 
+            <label htmlFor="email" className="input-label">
               <Mail size={16} /> Email
             </label>
             <input
               type="email"
               id="email"
-              className="login-input" 
+              className="login-input"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -88,30 +75,35 @@ const Login = () => { // Component name remains Login
             />
           </div>
 
-        
-          <div className="input-group">
+          <div className="input-group relative">
             <label htmlFor="password" className="input-label">
               <Lock size={16} /> Password
             </label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               id="password"
-              className="login-input" 
+              className="login-input pr-10"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
               placeholder="••••••••"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(prev => !prev)}
+              className="absolute top-9 right-3 text-gray-600 hover:text-gray-800 focus:outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
-   
           <button
             type="submit"
-            disabled={loading} 
+            disabled={loading}
             className="login-button"
           >
-          
             {loading && (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -121,10 +113,9 @@ const Login = () => { // Component name remains Login
             {loading ? 'Logging In...' : 'Login to Your Account'}
           </button>
 
-        
           <div className="text-center mt-6">
             <a
-              href='/register'
+              href="/register"
               className="text-blue-600 hover:text-blue-700 text-sm font-medium underline transition-colors duration-200"
             >
               New user? Create an account
@@ -136,4 +127,4 @@ const Login = () => { // Component name remains Login
   );
 };
 
-export default Login; 
+export default Login;
