@@ -7,6 +7,8 @@ import EmployeeSidebar from './EmployeeSidebar';
 import '../css/EmployeeDashboard.css';
 
 const EmployeeDashboard = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [message, setMessage] = useState('');
   const [logs, setLogs] = useState([]);
   const [week, setWeek] = useState('');
@@ -21,7 +23,7 @@ const EmployeeDashboard = () => {
 
   const punchIn = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/attendance/punchin', {}, {
+      const res = await axios.post('${API_BASE_URL}/api/attendance/punchin', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage(res.data.message);
@@ -32,7 +34,7 @@ const EmployeeDashboard = () => {
 
   const punchOut = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/attendance/punchout', {}, {
+      const res = await axios.post('${API_BASE_URL}/api/attendance/punchout', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage(res.data.message);
@@ -62,7 +64,7 @@ const EmployeeDashboard = () => {
           config.params = { week, year };
         }
 
-        const res = await axios.get('http://localhost:5000/api/attendance/logs', config);
+        const res = await axios.get(`${API_BASE_URL}/api/attendance/logs`, config);
         setLogs(res.data);
       } catch (err) {
         console.error("Error fetching logs", err);
@@ -89,7 +91,7 @@ const EmployeeDashboard = () => {
         <div className="dashboard-card">
           <div className="dashboard-hero">
             <img
-              src={`http://localhost:5000/${photo && photo !== 'undefined' ? photo : 'uploads/default.png'}`}
+              src={`${API_BASE_URL}/${photo && photo !== 'undefined' ? photo : 'uploads/default.png'}`}
               alt={name}
               style={{
                 width: '70px',

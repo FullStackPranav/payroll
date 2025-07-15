@@ -5,14 +5,17 @@ import AdminSidebar from './AdminSidebar';
 import '../css/AdminRolesPage.css'; // ✅ Import the CSS file
 
 const AdminRolesPage = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [roles, setRoles] = useState([]);
   const [name, setName] = useState('');
   const [hourlyRate, setHourlyRate] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+
   const token = localStorage.getItem('token');
-  const BASE_URL = 'http://localhost:5000';
+  const BASE_URL = API_BASE_URL;
 
   const fetchRoles = async () => {
     try {

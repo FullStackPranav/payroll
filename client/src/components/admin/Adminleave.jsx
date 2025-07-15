@@ -10,13 +10,15 @@ const AdminLeavePage = () => {
   const [statusFilter, setStatusFilter] = useState("All");
   const [monthFilter, setMonthFilter] = useState("All");
   const [yearFilter, setYearFilter] = useState("All");
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchLeaves = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/leaves/all", {
+        const res = await axios.get(`http://localhost:5000/api/leaves/all`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setLeaves(res.data);

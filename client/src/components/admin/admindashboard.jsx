@@ -9,6 +9,8 @@ const AdminDashboard = () => {
   const name = localStorage.getItem("name");
   const email = localStorage.getItem("email");
   const token = localStorage.getItem("token");
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
   const [employeeStats, setEmployeeStats] = useState({
     totalEmployees: 0,
@@ -23,7 +25,7 @@ const AdminDashboard = () => {
       try {
         if (!token) throw new Error("No authentication token found");
 
-        const res = await axios.get("http://localhost:5000/api/admin/totalusers", {
+        const res = await axios.get(`http://localhost:5000/api/admin/totalusers`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

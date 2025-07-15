@@ -6,6 +6,8 @@ import AdminSidebar from './AdminSidebar';
 import '../css/AdminUserList.css'; 
 
 const AdminUserList = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [users, setUsers] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState('');
@@ -16,7 +18,7 @@ const AdminUserList = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/users/all', {
+        const res = await axios.get(`${API_BASE_URL}/api/users/all`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(res.data);

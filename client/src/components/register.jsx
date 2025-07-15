@@ -13,6 +13,9 @@ const Register = () => {
     password: '',
   });
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+
   const [photo, setPhoto] = useState(null);
   const [showPassword, setShowPassword] = useState(false); // Password visibility toggle
   const [error, setError] = useState('');
@@ -44,7 +47,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/register',
+        `${API_BASE_URL}/api/auth/register`,
         data,
         {
           headers: {

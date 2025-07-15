@@ -5,6 +5,8 @@ import Navbar from '../navbar';
 import '../css/ShiftCreate.css'; 
 
 const ShiftCreate = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [name, setName] = useState('');
   const [days, setDays] = useState([]);
   const [startTime, setStartTime] = useState('');
@@ -23,7 +25,7 @@ const ShiftCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/shifts/Shifts', {
+      await axios.post(`${API_BASE_URL}/api/shifts/Shifts`, {
         name, days, startTime, endTime
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -40,7 +42,7 @@ const ShiftCreate = () => {
 
   const fetchShifts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/shifts/shifts', {
+      const res = await axios.get(`${API_BASE_URL}/api/shifts/shifts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShifts(res.data);
@@ -53,7 +55,7 @@ const handleDeleteShift = async (shiftId) => {
   if (!confirmDelete) return;
 
   try {
-    await axios.delete(`http://localhost:5000/api/shifts/deleteshift/${shiftId}`, {
+    await axios.delete(`${API_BASE_URL}/api/shifts/deleteshift/${shiftId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     fetchShifts(); 

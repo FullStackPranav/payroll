@@ -10,9 +10,12 @@ import {
   Menu
 } from 'lucide-react';
 
+
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -43,7 +46,7 @@ const Navbar = () => {
         </div>
 
         {user?.photo && (
-          <img className="navbar-photo" src={`http://localhost:5000/${user.photo}`} alt="Profile" />
+          <img className="navbar-photo" src={`${API_BASE_URL}/${user.photo}`} alt="Profile" />
         )}
       </div>
 

@@ -7,6 +7,8 @@ import EmployeeSidebar from './EmployeeSidebar';
 import '../css/EmployeePayslipDetail.css';
 
 const EmployeePayslipDetail = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const location = useLocation();
   const payslipRef = useRef();
   const queryParams = new URLSearchParams(location.search);
@@ -64,15 +66,15 @@ const EmployeePayslipDetail = () => {
 
       try {
         const [payslipRes, logsRes, leavesRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/employee/payslip/me', {
+          axios.get(`${API_BASE_URL}/api/employee/payslip/me`, {
             headers: { Authorization: `Bearer ${token}` },
             params: { year, month }
           }),
-          axios.get('http://localhost:5000/api/attendance/me/monthly-logs', {
+          axios.get(`${API_BASE_URL}/api/attendance/me/monthly-logs`, {
             headers: { Authorization: `Bearer ${token}` },
             params: { year, month }
           }),
-          axios.get('http://localhost:5000/api/leaves/me/approved', {
+          axios.get(`${API_BASE_URL}/api/leaves/me/approved`, {
             headers: { Authorization: `Bearer ${token}` },
             params: { year, month }
           })

@@ -7,6 +7,8 @@ import AdminSidebar from './AdminSidebar';
 import '../css/PayslipDetail.css';
 
 const PayslipDetail = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const { id, year, month } = useParams();
   const [data, setData] = useState(null);
   const [logs, setLogs] = useState([]);
@@ -38,7 +40,7 @@ const PayslipDetail = () => {
   useEffect(() => {
     const fetchPayslip = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/users/${id}/payslip`, {
+        const res = await axios.get(`${API_BASE_URL}/api/users/${id}/payslip`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { year, month }
         });
@@ -51,7 +53,7 @@ const PayslipDetail = () => {
 
     const fetchLogs = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/attendance/${id}/monthly-logs`, {
+        const res = await axios.get(`${API_BASE_URL}/api/attendance/${id}/monthly-logs`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { year, month }
         });
@@ -90,7 +92,7 @@ const PayslipDetail = () => {
     }
 
     try {
-      await axios.patch(`http://localhost:5000/api/attendance/${attendanceId}/adjust-hours`, {
+      await axios.patch(`${API_BASE_URL}/api/attendance/${attendanceId}/adjust-hours`, {
         workedHours: newHours
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -98,14 +100,14 @@ const PayslipDetail = () => {
 
       alert('Hours updated successfully');
 
-      const refreshed = await axios.get(`http://localhost:5000/api/attendance/${id}/monthly-logs`, {
+      const refreshed = await axios.get(`${API_BASE_URL}/api/attendance/${id}/monthly-logs`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { year, month }
       });
       setLogs(refreshed.data.sort((a, b) => new Date(a.date) - new Date(b.date)));
       setEditHours({});
 
-      const updatedPayslip = await axios.get(`http://localhost:5000/api/users/${id}/payslip`, {
+      const updatedPayslip = await axios.get(`${API_BASE_URL}/api/users/${id}/payslip`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { year, month }
       });

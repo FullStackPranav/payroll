@@ -12,7 +12,10 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Toggle visibility
+  const [showPassword, setShowPassword] = useState(false); 
+
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+  // console.log(API_BASE_URL);
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -27,7 +30,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+      const res = await axios.post(`${API_BASE_URL}/api/auth/login`, formData);
       const { token, role, name, photo, shift } = res.data;
 
       localStorage.setItem('token', token);

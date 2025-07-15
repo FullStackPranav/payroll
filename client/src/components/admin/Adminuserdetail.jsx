@@ -19,18 +19,20 @@ const AdminUserDetail = () => {
   const [selectedRole, setSelectedRole] = useState('');
   const [shifts, setShifts] = useState([]);
   const [selectedShift, setSelectedShift] = useState('');
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const [userRes, rolesRes, shiftsRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/users/${id}`, {
+          axios.get(`${API_BASE_URL}/api/users/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get('http://localhost:5000/api/employee-roles', {
+          axios.get(`${API_BASE_URL}/api/employee-roles`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get('http://localhost:5000/api/shifts/shifts', {
+          axios.get(`${API_BASE_URL}/api/shifts/shifts`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -51,7 +53,7 @@ const AdminUserDetail = () => {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/attendance/logs', {
+        const res = await axios.get(`${API_BASE_URL}/api/attendance/logs`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { id, week, year },
         });
@@ -66,7 +68,7 @@ const AdminUserDetail = () => {
   const handleStatusChange = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/users/${id}/status`,
+        `${API_BASE_URL}/api/users/${id}/status`,
         { status: status === 'active' ? 'inactive' : 'active' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -82,12 +84,12 @@ const AdminUserDetail = () => {
     if (!selectedRole) return alert('Please select a role.');
     try {
       await axios.put(
-        `http://localhost:5000/api/users/${id}/assign-job-role`,
+        `${API_BASE_URL}/api/users/${id}/assign-job-role`,
         { jobRoleId: selectedRole },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert('Role assigned!');
-      const res = await axios.get(`http://localhost:5000/api/users/${id}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
@@ -101,12 +103,12 @@ const AdminUserDetail = () => {
     if (!selectedShift) return alert('Please select a shift.');
     try {
       await axios.post(
-        'http://localhost:5000/api/shifts/assign-shift',
+        `${API_BASE_URL}/api/shifts/assign-shift`,
         { userId: id, shiftId: selectedShift },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert('Shift assigned!');
-      const res = await axios.get(`http://localhost:5000/api/users/${id}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
