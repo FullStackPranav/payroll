@@ -10,7 +10,7 @@ router.post('/punchin',verifyToken,punchIn);
 router.post('/punchout',verifyToken,punchOut);
 
 router.get('/logs',verifyToken,getDailyLogs);
-router.get('/:id/monthly-logs', verifyToken,getMonthlyLogs);
+router.get('/monthly-logs/:id', verifyToken, getMonthlyLogs);
 
 
 export default router;

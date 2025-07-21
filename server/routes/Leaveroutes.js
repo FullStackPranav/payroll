@@ -1,3 +1,4 @@
+
 import express from 'express';
 import {
   applyLeave,
@@ -11,16 +12,13 @@ import verifyToken from '../middleware/verifyToken.js';
 const router = express.Router();
 
 
-router.post('/apply', verifyToken, applyLeave);
-
-
+router.get('/me/approved', verifyToken, getApprovedLeavesForMonth);
 router.get('/my', verifyToken, getUserLeaves);
-
-
 router.get('/all', verifyToken, getAllLeaves);
 
-
 router.put('/:id/status', verifyToken, updateLeaveStatus);
-router.get('/me/approved', verifyToken, getApprovedLeavesForMonth);
+
+
+router.post('/apply', verifyToken, applyLeave);
 
 export default router;
