@@ -6,7 +6,7 @@ import { assignShiftToUser, createShift, deleteShift, getAllShifts } from '../co
 
 const router=express.Router()
 
-router.post('/Shifts',verifyToken,createShift)
+router.post('/', verifyToken, createShift);         // ✅ Much cleaner and proper
 router.get('/shifts',verifyToken,getAllShifts)
 router.delete('/deleteshift/:shiftId', verifyToken, deleteShift)
 
