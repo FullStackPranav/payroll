@@ -20,6 +20,7 @@ import ShiftCreate from './components/admin/ShiftCreate';
 import EmployeeLeavePage from './components/employee/employeeLeave';
 import AdminLeavePage from './components/admin/Adminleave';
 import Home from './components/homepage';
+import Navbar from './components/navbar';
 
 
 createRoot(document.getElementById('root')).render(
@@ -27,8 +28,11 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
 
-       
-      {/* default */}
+
+      {/* remove
+        */}
+        <Route path="/nav" element={<Navbar />} />
+      
 
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />

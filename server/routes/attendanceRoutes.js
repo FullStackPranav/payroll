@@ -11,6 +11,7 @@ router.post('/punchout',verifyToken,punchOut);
 
 router.get('/logs',verifyToken,getDailyLogs);
 router.get('/monthly-logs/:id', verifyToken, getMonthlyLogs);
+router.get('/:id/monthly-logs', verifyToken, getMonthlyLogs);
 
 
 export default router;

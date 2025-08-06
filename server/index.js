@@ -20,20 +20,14 @@ const __dirname = path.resolve();
 app.use(cors());
 app.use(express.json());
 
-// 👇 API routes
+
 app.use('/api/auth', authRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api', adminRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/shifts', shiftRoutes);
 app.use('/api/leaves',leaveRoutes);
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client/build')));
 
-  app.get('*', (req, res) =>
-    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
-  );
-}
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -5,8 +5,7 @@
   "main": "index.js",
   "build": "rm -rf node_modules && npm install",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",

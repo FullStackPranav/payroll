@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Navbar from "../navbar";
 import "../css/AdminDashboard.css";
 import logout from "../logout";
 import Adminsidebar from "./AdminSidebar";
+import Navbar from "../navbar";
 
 const AdminDashboard = () => {
   const name = localStorage.getItem("name");

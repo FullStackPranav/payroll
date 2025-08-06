@@ -70,7 +70,7 @@ const EmployeePayslipDetail = () => {
             headers: { Authorization: `Bearer ${token}` },
             params: { year, month }
           }),
-          axios.get(`${API_BASE_URL}/api/attendance/me/monthly-logs`, {
+          axios.get(`${API_BASE_URL}/api/attendance/monthly-logs/me`, {
             headers: { Authorization: `Bearer ${token}` },
             params: { year, month }
           }),

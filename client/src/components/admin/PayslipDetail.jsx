@@ -40,7 +40,7 @@ const PayslipDetail = () => {
   useEffect(() => {
     const fetchPayslip = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/users/${id}/payslip`, {
+        const res = await axios.get(`${API_BASE_URL}/api/users/${id}/payslip/`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { year, month }
         });
@@ -53,7 +53,7 @@ const PayslipDetail = () => {
 
     const fetchLogs = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/attendance/${id}/monthly-logs`, {
+        const res = await axios.get(`${API_BASE_URL}/api/attendance/monthly-logs/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { year, month }
         });
@@ -79,44 +79,54 @@ const PayslipDetail = () => {
     }));
   };
 
-  const handleSave = async (attendanceId) => {
-    const newHours = parseFloat(editHours[attendanceId]);
-    if (isNaN(newHours)) {
-      alert('Please enter a valid number for hours.');
-      return;
-    }
+const handleSave = async (attendanceId) => {
+  const newHours = parseFloat(editHours[attendanceId]);
+  if (isNaN(newHours)) {
+    alert('Please enter a valid number for hours.');
+    return;
+  }
 
-    if (newHours < 0) {
-      alert('Hours cannot be negative.');
-      return;
-    }
+  if (newHours < 0) {
+    alert('Hours cannot be negative.');
+    return;
+  }
 
-    try {
-      await axios.patch(`${API_BASE_URL}/api/attendance/${attendanceId}/adjust-hours`, {
-        workedHours: newHours
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/api/attendance/${attendanceId}/adjust-hours`, 
+      { workedHours: newHours },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
+    if (response.data && response.data.message === 'Worked hours updated successfully') {
       alert('Hours updated successfully');
 
-      const refreshed = await axios.get(`${API_BASE_URL}/api/attendance/${id}/monthly-logs`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { year, month }
-      });
-      setLogs(refreshed.data.sort((a, b) => new Date(a.date) - new Date(b.date)));
-      setEditHours({});
+      // Refresh the data
+      const [logsRes, payslipRes] = await Promise.all([
+        axios.get(`${API_BASE_URL}/api/attendance/monthly-logs/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { year, month }
+        }),
+        axios.get(`${API_BASE_URL}/api/users/${id}/payslip`, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { year, month }
+        })
+      ]);
 
-      const updatedPayslip = await axios.get(`${API_BASE_URL}/api/users/${id}/payslip`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { year, month }
-      });
-      setData(updatedPayslip.data);
-    } catch (err) {
-      console.error('Error updating worked hours:', err);
-      alert('Failed to update hours');
+      setLogs(logsRes.data.sort((a, b) => new Date(a.date) - new Date(b.date)));
+      setData(payslipRes.data);
+      setEditHours({});
+    } else {
+      throw new Error('Unexpected response from server');
     }
-  };
+  } catch (err) {
+    console.error('Error updating worked hours:', err);
+    const errorMsg = err.response?.data?.message || 
+                    err.message || 
+                    'Failed to update hours';
+    alert(errorMsg);
+  }
+};
 
   const calculateDailyHours = (punchCycles) => {
     return punchCycles.reduce((sum, cycle) => {

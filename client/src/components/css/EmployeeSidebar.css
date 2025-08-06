@@ -1,6 +1,7 @@
+
 .employee-sidebar {
   position: fixed;
-  top: 0;
+  top: 40px;
   left: 0;
   height: 100%;
   width: 200px;
@@ -34,10 +35,9 @@
   margin: 1rem 0;
 }
 
-.employee-sidebar ul li button{
+.employee-sidebar ul li button {
   margin: 1rem 0;
 }
-
 
 .employee-sidebar ul li a {
   color: white;
@@ -48,14 +48,35 @@
   text-decoration: underline;
 }
 
-.back-button{
+
+.back-button {
   width: 200px;
   height: 40px;
-  color: #343a40;
-  background-color: #343a40;
+  color: white;
+  background-color: #6c757d;
+  border: none;
+  cursor: pointer;
 }
 
-/* Responsive behavior */
+.sidebar-toggle {
+  position: absolute;
+  top: 200px;          
+  left: 1px;
+  z-index: 1001;
+  padding: 0.4rem 0.6rem;
+  background-color: #dde2e7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: left 0.3s ease;
+}
+
+.sidebar-toggle.open {
+  left: 210px; /* Push the button when sidebar is open */
+}
+
+/* Responsive styles */
 @media (max-width: 768px) {
   .employee-sidebar {
     width: 180px;
@@ -66,4 +87,3 @@
     padding: 0.3rem 0.5rem;
   }
 }
-

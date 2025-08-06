@@ -18,7 +18,7 @@ import {
 
 } from '../controller/payrollcontroller.js';
 import { isAdmin } from '../middleware/isAdmin.js';
-import { updateWrokedHours } from '../controller/attendanceController.js';
+import { updateWorkedHours } from '../controller/attendanceController.js';
 
 const router = express.Router();
 
@@ -34,9 +34,7 @@ router.get('/admin/totalusers',verifyToken,getEmployeeStats);
 
 router.get('/users/:id/payslip', verifyToken, getPayslipData); 
 router.get('/employee/payslip/me', verifyToken, getPayslipData);
-router.patch('/attendance/:id/adjust-hours',verifyToken,isAdmin,updateWrokedHours)
-
-
+router.patch('/attendance/:id/adjust-hours', verifyToken, updateWorkedHours);
 
 
 router.post('/employee-roles', verifyToken, createEmployeeRole);

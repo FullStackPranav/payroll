@@ -1,3 +1,25 @@
+.sidebar-toggle {
+  position: absolute;
+  top: 72px;          /* Push it below your navbar (assuming navbar is ~60px tall) */
+         /* Align with navbar toggle */
+  z-index: 1001;
+  background-color: #021a33;
+  color: white;
+  border: black;
+  border-color: aliceblue;
+  border-radius: 0px;
+  cursor: pointer;
+  transition: left 0.3s ease;
+  height: 35px;
+  width: 50px;
+  font-size: 1rem;
+}
+
+
+.sidebar-toggle.open {
+  left: 200px; /* match sidebar width */
+}
+
 .admin-sidebar {
   position: fixed;
   top: 0;
@@ -44,11 +66,14 @@
   text-decoration: underline;
 }
 
-.back-button{
-  width: 200px;
+.back-button {
+  width: 180px;
   height: 40px;
+  background-color: white;
   color: #343a40;
-  background-color: #343a40;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 /* Responsive behavior */
@@ -59,6 +84,5 @@
 
   .sidebar-toggle {
     font-size: 1.2rem;
-    padding: 0.3rem 0.5rem;
   }
 }

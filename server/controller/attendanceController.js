@@ -170,7 +170,7 @@ export const getDailyLogs = async (req, res) => {
       }
     
       let totalMinutes = 0;
-      // Sum all punch cycles durations
+      
       record.punchCycles.forEach(cycle => {
         if (cycle.punchIn && cycle.punchOut) {
           totalMinutes += Math.round((new Date(cycle.punchOut) - new Date(cycle.punchIn)) / (1000 * 60));
@@ -206,7 +206,7 @@ export const getMonthlyLogs = async (req, res) => {
       return res.status(400).json({ message: 'Year and month query parameters are required' });
     }
 
-    const startDate = new Date(year, month - 1, 1);
+    const startDate = new Date(Date.UTC(year, month - 1, 1));
     const endDate = new Date(year, month, 0, 23, 59, 59, 999); // end of month
 
     const records = await Attendance.find({
@@ -245,26 +245,27 @@ export const getMonthlyLogs = async (req, res) => {
 };
 
 
-export const updateWrokedHours=async(req,res)=>{
-  const{id}=req.params;
-  const{workedHours}=req.body;
+export const updateWorkedHours = async (req, res) => {
+  const { id } = req.params;
+  const { workedHours } = req.body;
 
-  if(typeof workedHours !=='number' || workedHours<0){
-    return res.status(400)({message:'wokred hours must bea  non negative number'})
-
+  if (typeof workedHours !== 'number' || workedHours < 0) {
+    return res.status(400).json({ message: 'Worked hours must be a non-negative number' });
   }
 
-  try{
+  try {
     const attendance = await Attendance.findById(id);
-    if(!attendance){
-      return res.status(404).json({message:'no record found'})
+    if (!attendance) {
+      return res.status(404).json({ message: 'No attendance record found' });
     }
-    attendance.workedHours=workedHours;
-    await attendance.save()
-    res.json({message:'worked hours updated'})
+    
+    // Update the workedHours field
+    attendance.workedHours = workedHours;
+    await attendance.save();
+    
+    res.json({ message: 'Worked hours updated successfully', attendance });
+  } catch (err) {
+    console.error('Error updating hours:', err);
+    res.status(500).json({ message: 'Server error while updating worked hours' });
   }
-  catch(err){
-    console.error('Error updating hours',err)
-    res.status(500).json({message:'server error while updating worked hours'})
-  }
-}
+};

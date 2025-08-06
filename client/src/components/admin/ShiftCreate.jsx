@@ -25,7 +25,7 @@ const ShiftCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_BASE_URL}/api/shifts/Shifts`, {
+      await axios.post(`${API_BASE_URL}/api/shifts`, {
         name, days, startTime, endTime
       }, {
         headers: { Authorization: `Bearer ${token}` }

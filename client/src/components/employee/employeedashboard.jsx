@@ -23,7 +23,7 @@ const EmployeeDashboard = () => {
 
   const punchIn = async () => {
     try {
-      const res = await axios.post('${API_BASE_URL}/api/attendance/punchin', {}, {
+      const res = await axios.post(`${API_BASE_URL}/api/attendance/punchin`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage(res.data.message);
@@ -34,7 +34,7 @@ const EmployeeDashboard = () => {
 
   const punchOut = async () => {
     try {
-      const res = await axios.post('${API_BASE_URL}/api/attendance/punchout', {}, {
+      const res = await axios.post(`${API_BASE_URL}/api/attendance/punchout`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessage(res.data.message);
